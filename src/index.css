@@ -1,13 +1,130 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ==========================================================================
+   Design System & Variabili Globali
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap');
+
+:root {
+  /* Palette Colori */
+  --color-primary: #e24747; /* Rosso vibrante per azioni e accenti */
+  --color-primary-dark: #c93e3e; /* Rosso per hover */
+  --color-secondary: #007882; /* Teal per link e accenti secondari */
+  --color-text: #333333; /* Grigio scuro per testo su sfondi chiari */
+  --color-text-light: #ffffff;
+  --color-background: #ffffff;
+  --color-surface: #f4f4f4; /* Grigio chiaro per sfondi di input o sezioni */
+  --color-border: #dddddd;
+
+  /* Tipografia */
+  --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Spaziatura */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* Altro */
+  --border-radius: 8px;
+  --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --transition-speed: 0.3s;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ==========================================================================
+   Reset e Stili di Base
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-primary);
+  color: var(--color-text);
+  background-color: var(--color-background);
+  line-height: 1.6;
+}
+
+h1, h2, h3 {
+  line-height: 1.2;
+  margin-top: 0;
+  margin-bottom: var(--spacing-md);
+}
+
+h1 { font-size: 3rem; font-weight: 900; }
+h2 { font-size: 2rem; font-weight: 700; }
+
+a {
+  color: var(--color-secondary);
+  text-decoration: none;
+  transition: opacity var(--transition-speed) ease;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ==========================================================================
+   Classi di Componenti Riutilizzabili
+   ========================================================================== */
+
+/* --- Pulsanti --- */
+.btn {
+  display: inline-block;
+  padding: 12px 24px;
+  font-family: var(--font-primary);
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: var(--border-radius);
+  border: 2px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-text-light);
+}
+.btn-primary:hover {
+  background-color: var(--color-primary-dark);
+  color: var(--color-text-light);
+  text-decoration: none;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-text-light);
+  border-color: var(--color-text-light);
+}
+.btn-outline:hover {
+  background-color: var(--color-text-light);
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+
+/* ==========================================================================
+   Media Queries per la Reattività
+   ========================================================================== */
+@media (max-width: 768px) {
+  .hero-container { padding: var(--spacing-md) var(--spacing-lg); }
+
+  .main-nav, .nav-right .btn {
+    display: none;
+  }
+  
+  .hamburger-menu {
+    display: block;
+    background: none;
+    border: none;
+    color: var(--color-text-light);
+    cursor: pointer;
+  }
+
+  .hero-content h1 { font-size: 40px; }
+  .search-form input { font-size: 16px; padding: 16px; }
 }
