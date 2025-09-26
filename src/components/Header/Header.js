@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; 
-import LoginModal from './LoginModal';
-import RegisterModal from './RegisterModal';
+import { useAuth } from '../../context/AuthContext'; 
+import LoginModal from '../LoginRegisterModal/LoginModal';
+import RegisterModal from '../LoginRegisterModal/RegisterModal';
 import './Header.css';
 
 const Header = () => {
@@ -11,11 +11,11 @@ const Header = () => {
     const location = useLocation();
 
     
-    const solidHeaderRoutes = ['/properties']; 
-    const isSolidTheme = solidHeaderRoutes.includes(location.pathname);
+    const transparentHeaderRoutes = ['/']; 
+    const isTransparentTheme = transparentHeaderRoutes.includes(location.pathname);
     
     // La classe base è sempre 'main-header', cambiamo solo il tema colori
-    const headerClasses = `main-header ${isSolidTheme ? 'theme-solid' : 'theme-transparent'}`;
+    const headerClasses = `main-header ${isTransparentTheme ? 'theme-transparent' : 'theme-solid'}`;
 
     const switchModal = (target) => setModalView(target);
 
@@ -36,7 +36,7 @@ const Header = () => {
                         // Header Privato
                         <>
                             {/* L'uso di user?.name è sicuro anche se user fosse momentaneamente non definito */}
-                            <span className="welcome-message">Ciao, {user?.name}!</span> 
+                            <span className="welcome-message">Hello, {user?.username}!</span> 
                             <Link to="/profile" className="profile-icon" aria-label="Vai al profilo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

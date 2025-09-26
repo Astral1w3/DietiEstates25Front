@@ -1,0 +1,50 @@
+.personal-details-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    text-align: left;
+}
+.personal-details-card h2 {
+    font-size: 20px;
+    color: #333;
+    margin: 0 0 16px 0;
+}
+.personal-details-card hr {
+    border: none;
+    border-top: 1px solid #e9ecef;
+    margin-bottom: 24px;
+}
+.personal-details-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+.form-group label {
+    font-size: 14px;
+    color: #6c757d;
+    margin-bottom: 8px;
+}
+.form-group input {
+    background-color: #f8f9fa;
+    color: #333;
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+@media (max-width: 768px) {
+    .personal-details-form {
+        grid-template-columns: 1fr;
+    }
+}

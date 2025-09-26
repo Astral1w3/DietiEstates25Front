@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Header from '../../components/Header'; // Assicurati che il percorso sia corretto
+import Header from '../../components/Header/Header'; // Assicurati che il percorso sia corretto
 import SearchBar from '../../components/SearchBar/SearchBar';
 import PropertyCard from '../../components/PropertyCard/PropertyCard';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';

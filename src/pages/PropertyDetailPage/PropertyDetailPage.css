@@ -1,0 +1,125 @@
+/* src/pages/PropertyDetailPage/PropertyDetailPage.css */
+
+.property-detail-container {
+    background-color: var(--color-background); /* Usa lo sfondo principale */
+    color: var(--color-text); /* Usa il colore del testo principale */
+    /* Lo spazio per l'header fisso è gestito dal layout principale, non qui */
+    padding-top: 80px; 
+}
+
+.property-detail-main {
+    max-width: 960px;
+    margin: 0 auto;
+    /* Usa le tue variabili per il padding */
+    padding: var(--spacing-xl) var(--spacing-lg); 
+}
+
+.back-to-search-link {
+    display: inline-block;
+    margin-bottom: var(--spacing-lg);
+    color: var(--color-secondary); /* Colore per i link */
+    font-weight: 700;
+}
+
+/* Griglia per le informazioni principali e il box di contatto */
+.detail-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-xl);
+    margin-top: var(--spacing-lg);
+    align-items: start;
+}
+
+.info-primary h1 {
+    font-size: 2.5rem; /* Puoi creare variabili anche per i font-size se vuoi */
+    font-weight: 900;
+    margin-bottom: var(--spacing-sm);
+}
+
+.info-primary p {
+    margin: var(--spacing-xs) 0;
+    color: #555; /* Un grigio leggermente più tenue per i dettagli */
+    font-size: 1.1rem;
+}
+
+.info-primary .stats {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-md);
+    font-weight: 700;
+}
+
+.info-primary .stats span {
+    padding-right: var(--spacing-md);
+    border-right: 1px solid var(--color-border);
+}
+
+.info-primary .stats span:last-child {
+    border-right: none;
+}
+
+.pet-policy {
+    margin-top: var(--spacing-md) !important;
+}
+
+.contact-box {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    padding: var(--spacing-lg);
+    box-shadow: var(--box-shadow); /* Usa la tua ombra predefinita */
+}
+
+/* Riusiamo la classe .btn e .btn-primary dal tuo design system */
+.btn-contact {
+    /* Eredita gli stili da .btn e .btn-primary, basta aggiungere le classi al bottone nel JS */
+    width: 100%;
+    padding: var(--spacing-md); /* Padding più generoso */
+    font-size: 1.1rem;
+}
+
+/* Stile per le sezioni informative */
+.info-section {
+    margin-top: var(--spacing-xxl); /* Più spazio tra le sezioni */
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.info-section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-md);
+}
+
+.info-section ul {
+    list-style: disc;
+    padding-left: 20px;
+}
+
+.cost-item {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-surface); /* Usa il colore surface per bordi leggeri */
+}
+
+.cost-item:last-child {
+    border-bottom: none;
+}
+
+.map-wrapper {
+    height: 400px;
+    width: 100%;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    margin-top: var(--spacing-md);
+}
+
+/* Aggiungiamo un po' di reattività come da tue media queries */
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr; /* Le colonne diventano una sola su mobile */
+    }
+    .info-primary h1 {
+        font-size: 2rem;
+    }
+}

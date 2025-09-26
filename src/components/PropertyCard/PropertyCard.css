@@ -75,3 +75,15 @@
     background: var(--color-secondary);
     color: var(--color-text-light);
 }
+
+/* Aggiungi queste regole alla fine del tuo file PropertyCard.css */
+
+.property-card-link {
+    text-decoration: none; /* Rimuove la sottolineatura del link */
+    color: inherit;       /* Fa ereditare il colore del testo dal genitore, invece del blu di default dei link */
+    display: block;       /* Assicura che il link occupi tutto lo spazio come un blocco */
+}
+
+.property-card-link:hover {
+    text-decoration: none; /* Assicura che la sottolineatura non appaia nemmeno al hover */
+}
