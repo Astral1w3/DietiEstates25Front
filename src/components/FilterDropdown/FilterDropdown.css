@@ -1,0 +1,91 @@
+.filter-dropdown-container {
+    position: absolute;
+    top: calc(100% + 8px); /* Posizionato sotto il pulsante con un piccolo spazio */
+    right: 0;
+    width: 350px;
+    background-color: white;
+    border-radius: var(--border-radius, 8px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    border: 1px solid var(--color-border, #ddd);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--color-border, #ddd);
+}
+.filter-header h3 { margin: 0; font-size: 18px; }
+
+.close-btn {
+    background: none; border: none; font-size: 24px; cursor: pointer; color: #6c757d;
+}
+
+.filter-content {
+    padding: 24px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+}
+.filter-section:last-child { margin-bottom: 0; }
+
+.filter-section > label {
+    display: block; font-weight: 600; margin-bottom: 12px; font-size: 14px;
+}
+
+.range-inputs, .radio-group {
+    display: flex;
+    gap: 12px;
+}
+.filter-section input[type="text"], .filter-section select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    font-size: 16px;
+    background-color: #f8f9fa;
+    margin-bottom: 10px; /* Spazio per gli input di posizione */
+}
+.filter-section input[type="text"]:last-child { margin-bottom: 0; }
+
+.radio-group { align-items: center; }
+.radio-group input[type="radio"] { margin-right: 4px; }
+.radio-group label { margin-right: 16px; }
+
+.filter-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 24px;
+    background-color: #f8f9fa;
+    border-top: 1px solid var(--color-border, #ddd);
+}
+.btn-reset, .btn-apply {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.btn-reset {
+    background-color: transparent;
+    color: #6c757d;
+}
+.btn-apply {
+    background-color: var(--color-primary, #e24747);
+    color: white;
+}
+
+.range-inputs {
+    display: flex;
+    gap: 10px; /* Spazio tra i due campi */
+}
+
+.range-inputs .filter-input {
+    width: 100%; /* Ogni campo occupa metà dello spazio disponibile */
+}

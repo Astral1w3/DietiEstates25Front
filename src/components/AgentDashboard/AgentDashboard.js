@@ -5,7 +5,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 // Import per l'esportazione
 import { CSVLink } from 'react-csv';
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { autoTable } from 'jspdf-autotable';
 // Import per le icone
 import { FaEye, FaHandshake, FaFileSignature, FaBuilding } from 'react-icons/fa';
 
@@ -37,7 +37,7 @@ const AgentDashboard = () => {
     const handleExportPDF = useCallback(() => {
         const doc = new jsPDF();
         doc.text("Agent Property Report", 14, 20);
-        doc.autoTable({
+        autoTable(doc, {
             startY: 30,
             head: [['ID', 'Address', 'Views', 'Visits', 'Offers', 'Status']],
             body: mockData.properties.map(p => [p.id, p.address, p.views, p.visits, p.offers, p.status]),

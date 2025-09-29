@@ -54,3 +54,18 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--spacing-lg);
 }
+
+/* Stile per il contenitore del pulsante del filtro */
+.filter-wrapper {
+    position: relative; /* Cruciale per il posizionamento del dropdown */
+}
+
+/* Stile per il pulsante del filtro (sostituisce il vecchio .btn-more-placeholder) */
+.btn-filter {
+    background-color: var(--color-background, #fff);
+    border: 1px solid var(--color-border, #ddd);
+    padding: 8px 16px;
+    border-radius: var(--border-radius, 8px);
+    cursor: pointer;
+    font-weight: 500;
+}
