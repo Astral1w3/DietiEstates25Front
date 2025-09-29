@@ -128,3 +128,22 @@ a:hover {
   .hero-content h1 { font-size: 40px; }
   .search-form input { font-size: 16px; padding: 16px; }
 }
+
+/*
+==========================================================================
+   Reset Globale per gli Input Numerici
+   - Nasconde le freccette (spinners) in tutti i browser.
+==========================================================================
+*/
+
+/* Per browser basati su WebKit (Chrome, Safari, Edge, Opera) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Rimuove lo stile nativo */
+    margin: 0; /* Rimuove ogni possibile margine residuo */
+}
+
+/* Per Firefox */
+input[type="number"] {
+    -moz-appearance: textfield; /* Dice a Firefox di trattarlo come un campo di testo */
+}
