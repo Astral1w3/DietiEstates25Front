@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
     // per mantenere la sessione attiva tra i refresh della pagina.
   };
   
-  const logout = () => setUser(null);
+  const logout = () => setUser(null); 
 
   const value = {
     user,

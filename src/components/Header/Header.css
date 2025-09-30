@@ -96,12 +96,16 @@
 
 /* Stile del pulsante Login */
 .main-header.theme-transparent .btn-login {
-    color: #202020;
-    background-color: #fff;
-    border-color: #fff;
+    border-style: hidden;
+    font-weight: 700;
+    font-size: 16px;
+    color: #ffffff;
+    border-color: #e24747;
+    background-color: #e24747;
 }
 
 .main-header.theme-transparent .btn-login:hover {
+    box-shadow: 0px 0px 15px 0px #e24747;
     border-color: #e24747;
     background-color: #e24747;
     color: #ffff; /* Testo scuro su sfondo bianco */

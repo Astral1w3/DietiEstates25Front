@@ -69,7 +69,7 @@ const AgentDashboard = () => {
     return (
         <div className="agent-dashboard">
             <h2>Agent Dashboard</h2>
-            
+            <hr/>
             <div className="dashboard-grid">
                 <StatCard icon={<FaEye />} title="Total Property Views" value={mockData.totalViews.toLocaleString()} change="+5% this month" />
                 <StatCard icon={<FaHandshake />} title="Booked Visits" value={mockData.bookedVisits} change="+12 bookings" />
@@ -77,7 +77,7 @@ const AgentDashboard = () => {
                 <StatCard icon={<FaBuilding />} title="Active Listings" value={mockData.properties.filter(p => p.status === 'Active').length} />
             </div>
 
-            <div className="dashboard-section chart-container">
+            <div className="card chart-container">
                 <h3>Performance Over Time</h3>
                 <Line options={chartOptions} data={chartData} />
             </div>

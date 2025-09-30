@@ -70,7 +70,7 @@ const CreateUserForm = ({ roleToCreate }) => {
     };
 
     return (
-        <div className="create-user-card">
+        <div className="card">
             <h2>Create New {roleToCreate}</h2>
             <hr />
             <form onSubmit={handleSubmit} noValidate>

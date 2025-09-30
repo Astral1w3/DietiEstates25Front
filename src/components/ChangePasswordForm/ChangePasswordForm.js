@@ -63,7 +63,7 @@ const ChangePasswordForm = () => {
     };
 
     return (
-        <div className="change-password-card">
+        <div className="card">
             <h2>Change Your Password</h2>
             <hr />
             <form onSubmit={handleSubmit} noValidate>

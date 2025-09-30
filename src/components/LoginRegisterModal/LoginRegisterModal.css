@@ -126,42 +126,12 @@
   margin-top: var(--spacing-lg);
 }
 
-.input-generic {
-  /* Box Model e Layout */
+.btn-login{
   width: 100%;
-  padding: 14px var(--spacing-md);
-  margin-bottom: var(--spacing-md); /* Aggiunge spazio sotto per layout verticali */
-  box-sizing: border-box; /* Previene problemi di layout con padding e bordi */
-
-  /* Aspetto e Bordi */
-  border: 1px solid var(--color-border);
-  border-radius: var(--border-radius);
-  background-color: var(--color-background);
-  
-  /* Tipografia */
-  font-size: 16px;
-  font-family: var(--font-primary);
-  color: var(--color-text);
-  
-  /* Transizioni per un'esperienza fluida */
-  transition: border-color var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+  margin-top: 20px;
 }
 
-/* Stile per il testo del placeholder */
-.input-generic::placeholder {
-  color: #999;
-}
-
-/* Stile per lo stato :focus (quando l'utente clicca/scrive nel campo) */
-.input-generic:focus {
-  outline: none; /* Rimuove il bordo di default del browser */
-  border-color: var(--color-primary); /* Evidenzia il bordo con il colore primario */
-  box-shadow: 0 0 0 3px rgba(226, 71, 71, 0.2); /* Aggiunge un "glow" per un feedback visivo migliore */
-}
-
-/* Stile per lo stato disabilitato */
-.input-generic:disabled {
-  background-color: var(--color-surface);
-  cursor: not-allowed;
-  opacity: 0.7;
+.input-generic{
+  margin-top: 3px;
+  margin-bottom: 10px;
 }

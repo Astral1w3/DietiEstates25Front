@@ -9,6 +9,7 @@ import AddPropertyForm from '../../components/AddPropertyForm/AddPropertyForm';
 import CreateUserForm from '../../components/CreateUserForm/CreateUserForm';
 import ChangePasswordForm from '../../components/ChangePasswordForm/ChangePasswordForm';
 import AgentDashboard from '../../components/AgentDashboard/AgentDashboard';
+import Logout from '../../components/Logout/Logout'
 
 import './Profile.css'; // Useremo questo CSS per il layout
 
@@ -32,6 +33,8 @@ const ProfilePage = () => {
                 return <CreateUserForm roleToCreate="Manager" />;
             case 'changePassword':
                 return <ChangePasswordForm />;
+            case 'logout':
+                return <Logout />;
             default:
                 return <ViewProfileDetails />;
         }

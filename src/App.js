@@ -11,8 +11,7 @@ import "./App.css";
 function App() {
 
   const Home = lazy(() => import('./pages/Home/Home.js'));
-  const Signup = lazy(() => import('./pages/Signup.js'));
-  const Login = lazy(() => import('./pages/Login.js'));
+  //const Login = lazy(() => import('./pages/Login.js'));
   const Profile = lazy(() => import('./pages/Profile/Profile.js'));
   const PropertiesPage = lazy(() => import('./pages/PropertiesPage/PropertiesPage.js'));
 
@@ -23,19 +22,43 @@ function App() {
     ADMIN: 'admin',
   };
 
+   const spinnerContainerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh', // Occupa tutta l'altezza per centrare
+  };
+
+  const spinnerStyle = {
+    width: '50px',
+    height: '50px',
+    border: '6px solid #f4f4f4', // Corrisponde a var(--color-surface)
+    borderTop: '6px solid #e24747', // Corrisponde a var(--color-primary)
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite', // Usa l'animazione definita nel CSS
+  };
+
+
   return (
     //    Questo rende i dati di autenticazione disponibili a tutti i componenti figli (Header e Routes)
     <AuthProvider>
       <div className="App">
         <Header />
 
-        <Suspense fallback={<div className="container">Wait...</div>}>
+
+
+        <Suspense 
+          fallback={
+            <div style={spinnerContainerStyle}>
+              <div style={spinnerStyle}></div>
+            </div>
+          }
+        >
           <Routes>
             
             <Route path="/" element={<Home />} />
             <Route path="/properties" element={<PropertiesPage />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            {/*<Route path="/login" element={<Login />} />*/}
             <Route path="/property/:propertyId" element={<PropertyDetailPage />} /> 
             
             <Route

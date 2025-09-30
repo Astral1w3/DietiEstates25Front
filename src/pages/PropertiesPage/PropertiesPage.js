@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import Header from '../../components/Header/Header'; // Assicurati che il percorso sia corretto
+import React, { useState, useEffect } from 'react';
 import SearchBar from '../../components/SearchBar/SearchBar';
 import PropertyCard from '../../components/PropertyCard/PropertyCard';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';
 import FilterDropdown from '../../components/FilterDropdown/FilterDropdown';
+import { useSearchParams } from 'react-router-dom';
 import './PropertiesPage.css';
 
 // ---- DATI AGGIORNATI CON ENERGYCLASS ----
@@ -42,6 +42,30 @@ const PropertiesPage = () => {
     const [isFilterOpen, setFilterOpen] = useState(false);
     const [filters, setFilters] = useState(initialFilters);
     const [selectedServices, setSelectedServices] = useState([]);
+    const [searchParams] = useSearchParams();
+
+    useEffect(() => {
+        const typeFromUrl = searchParams.get('type'); // Legge il valore del parametro 'type'
+
+        if (typeFromUrl === 'buy' || typeFromUrl === 'rent') {
+            // Se troviamo un filtro valido nell'URL, lo applichiamo subito
+            
+            // 1. Aggiorna lo stato dei filtri, così il dropdown mostra la selezione corretta
+            const newFilters = { ...initialFilters, transactionType: typeFromUrl };
+            setFilters(newFilters);
+            
+            // 2. Filtra la lista delle proprietà
+            const preFilteredProperties = mockProperties.filter(
+                p => p.transactionType === typeFromUrl
+            );
+            setProperties(preFilteredProperties);
+        } else {
+            // Se non c'è un filtro nell'URL, mostra tutte le proprietà
+            setProperties(mockProperties);
+            setFilters(initialFilters);
+        }
+    // La dipendenza [searchParams] assicura che questo effetto si riattivi se l'URL cambia
+    }, [searchParams]);
 
     const handleFilterChange = (e) => {
         const { name, value } = e.target;

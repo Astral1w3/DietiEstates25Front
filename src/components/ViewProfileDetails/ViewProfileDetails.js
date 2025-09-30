@@ -10,7 +10,7 @@ const ViewProfileDetails = () => {
     });
 
     return (
-        <div className="personal-details-card">
+        <div className="card">
             <h2>Personal details</h2>
             <hr />
             <form className="personal-details-form">

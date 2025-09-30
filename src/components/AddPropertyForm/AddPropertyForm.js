@@ -114,7 +114,7 @@ const AddPropertyForm = () => {
 
 
     return (
-        <div className="add-property-card">
+        <div className="card">
             <h2>Add New Property</h2>
             <hr />
             <form onSubmit={handleSubmit} noValidate>

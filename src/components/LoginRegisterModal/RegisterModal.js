@@ -83,7 +83,7 @@ const RegisterModal = ({ isOpen, onSwitch }) => {
             required
           />
           {error && <p className="error-message">{error}</p>}
-          <button type="submit" className="submit-button">Register</button>
+          <button type="submit" className="btn btn-primary btn-login">Register</button>
         </form>
       </div>
     </div>

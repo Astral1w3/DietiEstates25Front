@@ -19,7 +19,7 @@ const LoginModal = ({ isOpen, onSwitch }) => {
 
   //chiamate api
   function checkIfEmailExist(){
-    return true;
+    return false;
   }
 
   function checkIfPasswordMatches(){
@@ -76,7 +76,7 @@ const LoginModal = ({ isOpen, onSwitch }) => {
             value={email} 
             onChange={(e) => setEmail(e.target.value)} 
           />
-          <button type="submit" className="submit-button">Submit</button>
+          <button type="submit" className="btn btn-primary btn-login">Submit</button>
           {error && <p className="error-message">{error}</p>}
         </form>
         
@@ -107,7 +107,7 @@ const LoginModal = ({ isOpen, onSwitch }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit" className="submit-button">Submit</button>
+          <button type="submit" className="btn btn-primary btn-login">Submit</button>
         </form>
       </>
     );
