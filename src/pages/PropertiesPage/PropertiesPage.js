@@ -3,18 +3,17 @@ import SearchBar from '../../components/SearchBar/SearchBar';
 import PropertyCard from '../../components/PropertyCard/PropertyCard';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';
 import FilterDropdown from '../../components/FilterDropdown/FilterDropdown';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import './PropertiesPage.css';
 
 // ---- DATI AGGIORNATI CON ENERGYCLASS ----
-const mockProperties = [
-    { id: 1, price: '3,000 - 3,200', beds: 1, baths: 1, address: '30 Dore St #3e6110519', city: 'San Francisco, CA 94103', municipality: 'SoMa', image: 'https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80', lat: 37.772, lon: -122.414, tags: ['PET FRIENDLY'], services: ['elevator', 'garage', 'concierge'], energyClass: 'A', transactionType: 'rent' },
-    { id: 2, price: '800 - 850', beds: 0, baths: 1, address: '205 9th Street | 205 9th St #13', city: 'San Francisco, CA 94103', municipality: 'SoMa', image: 'https://images.unsplash.com/photo-1598228723793-52759bba239c?auto=format&fit=crop&q=80', lat: 37.775, lon: -122.416, tags: ['NEW - 1 DAY AGO'], services: ['heating', 'close to public transport'], energyClass: 'C', transactionType: 'rent' },
-    { id: 3, price: '950,000', beds: 2, baths: 2, address: '123 Main St', city: 'San Francisco, CA 94105', municipality: 'Financial District', image: 'https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80', lat: 37.790, lon: -122.401, tags: ['PET FRIENDLY'], services: ['air conditioning', 'elevator', 'balcony', 'close to parks'], energyClass: 'B', transactionType: 'buy' },
-    { id: 4, price: '1,200,000', beds: 3, baths: 2, address: '456 Market St', city: 'San Francisco, CA 94105', municipality: 'Financial District', image: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80', lat: 37.792, lon: -122.403, tags: [], services: ['concierge', 'heating', 'garage', 'terrace', 'elevator'], energyClass: 'A', transactionType: 'buy' },
-    { id: 5, price: '2,800', beds: 1, baths: 1, address: '789 Mission St', city: 'San Francisco, CA 94103', municipality: 'SoMa', image: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80', lat: 37.781, lon: -122.409, tags: [], services: ['air conditioning', 'close to public transport', 'Cellar'], energyClass: 'D', transactionType: 'rent' },
+export const mockProperties = [
+    { id: 1, price: '3,000 - 3,200', beds: 1, baths: 1, address: '30 Dore St #3e6110519', city: 'San Francisco, CA 94103', municipality: 'SoMa', images: ['https://images.unsplash.com/photo-1582268611958-ebfd161ef9cf?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1613490493576-75de62addb69?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&q=80'], lat: 37.772, lon: -122.414, tags: ['PET FRIENDLY'], services: ['elevator', 'garage', 'concierge'], energyClass: 'A', transactionType: 'rent' },
+    { id: 2, price: '800 - 850', beds: 0, baths: 1, address: '205 9th Street | 205 9th St #13', city: 'San Francisco, CA 94103', municipality: 'SoMa', images: ['https://images.unsplash.com/photo-1598228723793-52759bba239c?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1572120360610-d971b9d7767c?auto=format&fit=crop&q=80'], lat: 37.775, lon: -122.416, tags: ['NEW - 1 DAY AGO'], services: ['heating', 'close to public transport'], energyClass: 'C', transactionType: 'rent' },
+    { id: 3, price: '950,000', beds: 2, baths: 2, address: '123 Main St', city: 'San Francisco, CA 94105', municipality: 'Financial District', images: ['https://images.unsplash.com/photo-1570129477492-45c003edd2be?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80'], lat: 37.790, lon: -122.401, tags: ['PET FRIENDLY'], services: ['air conditioning', 'elevator', 'balcony', 'close to parks'], energyClass: 'B', transactionType: 'buy' },
+    { id: 4, price: '1,200,000', beds: 3, baths: 2, address: '456 Market St', city: 'San Francisco, CA 94105', municipality: 'Financial District', images: ['https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1556912173-35f35c9ba959?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?auto=format&fit=crop&q=80'], lat: 37.792, lon: -122.403, tags: [], services: ['concierge', 'heating', 'garage', 'terrace', 'elevator'], energyClass: 'A', transactionType: 'buy' },
+    { id: 5, price: '2,800', beds: 1, baths: 1, address: '789 Mission St', city: 'San Francisco, CA 94103', municipality: 'SoMa', images: ['https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&q=80', 'https://images.unsplash.com/photo-1592595896551-8c3562145fb6?auto=format&fit=crop&q=80'], lat: 37.781, lon: -122.409, tags: [], services: ['air conditioning', 'close to public transport', 'Cellar'], energyClass: 'D', transactionType: 'rent' },
 ];
-
 // ---- LISTA DEI SERVIZI DISPONIBILI ----
 const availableServices = [
     { id: 'concierge', label: 'Concierge', emoji: '🛎️' },
@@ -177,14 +176,19 @@ const PropertiesPage = () => {
                     </div>
 
                     <div className="property-grid">
-                        {properties.map(property => (
-                            <PropertyCard 
-                                key={property.id} 
-                                property={property}
-                                onMouseEnter={() => setHoveredPropertyId(property.id)}
-                                onMouseLeave={() => setHoveredPropertyId(null)}
-                            />
-                        ))}
+                        {properties.map(property => {
+                            // MODIFICA: Passa la prima immagine dell'array a PropertyCard
+                            const cardProperty = { ...property, image: property.images[0] };
+                            return (
+                                <Link to={`/property/${property.id}`} key={property.id} className="property-card-link">
+                                    <PropertyCard 
+                                        property={cardProperty}
+                                        onMouseEnter={() => setHoveredPropertyId(property.id)}
+                                        onMouseLeave={() => setHoveredPropertyId(null)}
+                                    />
+                                </Link>
+                            )
+                        })}
                     </div>
                 </div>
 

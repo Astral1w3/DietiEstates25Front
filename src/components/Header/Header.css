@@ -3,12 +3,17 @@
    Questi stili si applicano sempre, indipendentemente dal tema.
    ========================================================================== */
 
+/* ==========================================================================
+   HEADER: LAYOUT DI BASE
+   ========================================================================== */
+
+
 .main-header {
-    position: fixed; /* Posizionamento fisso per essere sempre in alto */
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000; /* Assicura che sia sopra gli altri contenuti */
+    z-index: 1000;
     
     display: flex;
     justify-content: space-between;
@@ -17,10 +22,10 @@
     padding: 15px 5%;
     box-sizing: border-box;
 
-    /* Transizioni morbide per cambi di tema o colore */
+
+
     transition: background-color 0.3s ease, border-bottom 0.3s ease;
 }
-
 .nav-left, .nav-right {
     display: flex;
     align-items: center;
@@ -55,21 +60,22 @@
 .btn-login {
     font-weight: 700;
     padding: 10px 20px;
-    border: 2px solid; /* Il colore del bordo verrà definito dal tema */
+    border: 2px solid; /* Il colore del bordo verrÃ  definito dal tema */
     border-radius: 8px;
     background-color: transparent;
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    
 }
 
 .welcome-message {
     font-size: 16px;
     font-weight: 700;
-    padding: 8px 0;
+    padding: 12px 0; 
 }
 
 .hamburger-menu {
-    display: none; /* Nascosto su desktop */
+    display: none; /* Nascosto su desktop */    
     background: none;
     border: none;
     cursor: pointer;

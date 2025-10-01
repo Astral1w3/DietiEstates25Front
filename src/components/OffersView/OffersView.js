@@ -1,61 +1,15 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom'; // Per linkare alla proprietà
+import { Link } from 'react-router-dom';
 import 'jspdf-autotable';
-
-// Import per le icone (coerenti con il design)
 import { FaTags, FaRegClock, FaRegCheckCircle, FaRegTimesCircle } from 'react-icons/fa';
-
 import StatCard from '../StatCard/StatCard';
-import './OffersView.css'; // Creeremo questo file CSS dedicato
+import './OffersView.css';
 
-// --- DATI DI ESEMPIO BASATI SULLA TABELLA public.offer ---
-// Simula una chiamata API che unisce le tabelle 'offer', 'property' e 'usertable'
-// per ottenere tutti i dati necessari per l'interfaccia.
 const mockOffers = [
-    { 
-        id_offer: 1,
-        id_property: 101,
-        propertyAddress: '123 Main St, Milano',
-        listingPrice: 350000.00,
-        offer_price: 345000.00,
-        offer_date: '2023-11-15T09:30:00',
-        clientName: 'Mario Rossi',
-        clientEmail: 'mario.rossi@example.com',
-        state: 'Pending' 
-    },
-    { 
-        id_offer: 2,
-        id_property: 102,
-        propertyAddress: '456 Oak Ave, Roma',
-        listingPrice: 280000.00,
-        offer_price: 280000.00,
-        offer_date: '2023-11-14T15:00:00',
-        clientName: 'Luigi Verdi',
-        clientEmail: 'luigi.verdi@example.com',
-        state: 'Accepted' 
-    },
-    { 
-        id_offer: 3,
-        id_property: 103,
-        propertyAddress: '789 Pine Ln, Napoli',
-        listingPrice: 190000.00,
-        offer_price: 175000.00,
-        offer_date: '2023-11-12T11:00:00',
-        clientName: 'Anna Bianchi',
-        clientEmail: 'anna.bianchi@example.com',
-        state: 'Rejected' 
-    },
-    { 
-        id_offer: 4,
-        id_property: 101,
-        propertyAddress: '123 Main St, Milano',
-        listingPrice: 350000.00,
-        offer_price: 340000.00,
-        offer_date: '2023-11-16T18:45:00',
-        clientName: 'Laura Neri',
-        clientEmail: 'laura.neri@example.com',
-        state: 'Pending' 
-    },
+    { id_offer: 1, id_property: 101, propertyAddress: '123 Main St, Milano', listingPrice: 350000.00, offer_price: 345000.00, offer_date: '2023-11-15T09:30:00', clientName: 'Mario Rossi', clientEmail: 'mario.rossi@example.com', state: 'Pending' },
+    { id_offer: 2, id_property: 102, propertyAddress: '456 Oak Ave, Roma', listingPrice: 280000.00, offer_price: 280000.00, offer_date: '2023-11-14T15:00:00', clientName: 'Luigi Verdi', clientEmail: 'luigi.verdi@example.com', state: 'Accepted' },
+    { id_offer: 3, id_property: 103, propertyAddress: '789 Pine Ln, Napoli', listingPrice: 190000.00, offer_price: 175000.00, offer_date: '2023-11-12T11:00:00', clientName: 'Anna Bianchi', clientEmail: 'anna.bianchi@example.com', state: 'Rejected' },
+    { id_offer: 4, id_property: 101, propertyAddress: '123 Main St, Milano', listingPrice: 350000.00, offer_price: 340000.00, offer_date: '2023-11-16T18:45:00', clientName: 'Laura Neri', clientEmail: 'laura.neri@example.com', state: 'Pending' },
 ];
 
 const OffersView = () => {
@@ -68,17 +22,16 @@ const OffersView = () => {
         return mockOffers.filter(o => o.state === filter);
     }, [filter]);
 
-    // Statistiche per le StatCard
     const totalOffers = mockOffers.length;
     const pendingCount = mockOffers.filter(o => o.state === 'Pending').length;
     const acceptedCount = mockOffers.filter(o => o.state === 'Accepted').length;
 
     return (
-        <div className="offers-view">
+        <div className="dashboard-view">
             <h2>Manage Offers</h2>
             <hr />
 
-            <div className="dashboard-grid">
+            <div className="stats-grid">
                 <StatCard icon={<FaTags />} title="Total Offers Received" value={totalOffers} />
                 <StatCard icon={<FaRegClock />} title="Pending Review" value={pendingCount} />
                 <StatCard icon={<FaRegCheckCircle />} title="Accepted Offers" value={acceptedCount} />
@@ -88,23 +41,21 @@ const OffersView = () => {
             <div className="dashboard-section">
                 <div className="section-header">
                     <h3>All Offers</h3>
-                    <div className="actions-group">
-                        <div className="filter-buttons">
-                            <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>All</button>
-                            <button onClick={() => setFilter('Pending')} className={filter === 'Pending' ? 'active' : ''}>Pending</button>
-                            <button onClick={() => setFilter('Accepted')} className={filter === 'Accepted' ? 'active' : ''}>Accepted</button>
-                            <button onClick={() => setFilter('Rejected')} className={filter === 'Rejected' ? 'active' : ''}>Rejected</button>
-                        </div>
+                    <div className="filter-buttons">
+                        <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>All</button>
+                        <button onClick={() => setFilter('Pending')} className={filter === 'Pending' ? 'active' : ''}>Pending</button>
+                        <button onClick={() => setFilter('Accepted')} className={filter === 'Accepted' ? 'active' : ''}>Accepted</button>
+                        <button onClick={() => setFilter('Rejected')} className={filter === 'Rejected' ? 'active' : ''}>Rejected</button>
                     </div>
                 </div>
 
                 <div className="table-container">
-                    <table className="offers-table">
+                    <table className="data-table">
                         <thead>
                             <tr>
                                 <th>Property</th>
                                 <th>Client</th>
-                                <th>Prices </th>
+                                <th>Prices</th>
                                 <th>Offer Date</th>
                                 <th>Status</th>
                                 <th>Actions</th>
@@ -138,14 +89,14 @@ const OffersView = () => {
                                             {offer.state}
                                         </span>
                                     </td>
-                                    <div className="actions-cell">
+                                    <td className="actions-cell">
                                         {offer.state === 'Pending' && (
                                             <>
-                                                <button className="btn-action accept">Accept</button>
+                                                <button className="btn-action confirm">Accept</button>
                                                 <button className="btn-action reject">Reject</button>
                                             </>
                                         )}
-                                    </div>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>

@@ -70,13 +70,12 @@ const AgentDashboard = () => {
         <div className="agent-dashboard">
             <h2>Agent Dashboard</h2>
             <hr/>
-            <div className="dashboard-grid">
+            <div className="dashboard-grid stats-grid">
                 <StatCard icon={<FaEye />} title="Total Property Views" value={mockData.totalViews.toLocaleString()} change="+5% this month" />
                 <StatCard icon={<FaHandshake />} title="Booked Visits" value={mockData.bookedVisits} change="+12 bookings" />
                 <StatCard icon={<FaFileSignature />} title="Offers Received" value={mockData.offersReceived} change="+3 new offers" />
                 <StatCard icon={<FaBuilding />} title="Active Listings" value={mockData.properties.filter(p => p.status === 'Active').length} />
             </div>
-
             <div className="card chart-container">
                 <h3>Performance Over Time</h3>
                 <Line options={chartOptions} data={chartData} />
