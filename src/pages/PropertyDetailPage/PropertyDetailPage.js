@@ -1,10 +1,13 @@
 // src/pages/PropertyDetailPage/PropertyDetailPage.js
 
-import React from 'react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 import PropertyGallery from '../../components/PropertyGallery/PropertyGallery'; // Assicurati che il percorso sia corretto
 import MapDisplay from '../../components/MapDisplay/MapDisplay'; // Assicurati che il percorso sia corretto
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 import './PropertyDetailPage.css';
+
 
 // --- DATI DI ESEMPIO ---
 // In un'applicazione reale, questi dati arriverebbero da un'API (es. tramite un fetch in un useEffect)
@@ -51,9 +54,35 @@ const propertyData = {
 
 
 const PropertyDetailPage = () => {
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(null);
     // Poiché MapDisplay si aspetta un array 'properties', gli passiamo i nostri dati dentro un array.
     // L'hoveredPropertyId fa sì che la nostra unica puntina sia evidenziata (rossa).
     const mapProperties = [propertyData];
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setSelectedDate(null); // Resetta la data quando il modale viene chiuso
+    };
+
+    const handleDateChange = (date) => {
+        setSelectedDate(date);
+    };
+
+    const handleSubmit = () => {
+        if (selectedDate) {
+            // Qui andrebbe la logica per inviare la richiesta di visita al backend
+            // Ad esempio, una chiamata API con l'ID della proprietà e la data selezionata.
+            alert(`Visit requested for: ${selectedDate.toLocaleDateString()}`);
+            handleCloseModal();
+        } else {
+            alert("Please select a date.");
+        }
+    };
+
 
     return (
         <div className="property-detail-container">
@@ -62,11 +91,12 @@ const PropertyDetailPage = () => {
                 
                 <PropertyGallery images={propertyData.images} />
 
+                
                 {/* --- SEZIONE INFO PRINCIPALI E CONTATTO --- */}
                 <div className="detail-grid">
                     <div className="info-primary">
                         <h1>{propertyData.address}</h1>
-                        <p>{propertyData.city}, {propertyData.state} {propertyData.zip} · <a href="#">{propertyData.neighborhood}</a></p>
+                        <p>{propertyData.city}, {propertyData.state} {propertyData.zip} · {propertyData.neighborhood}</p>
                         <div className="stats">
                             <span>{propertyData.type}</span>
                             <span>{propertyData.baths} Bath</span>
@@ -74,10 +104,33 @@ const PropertyDetailPage = () => {
                         </div>
                         <p className="pet-policy">{propertyData.petsAllowed ? '✓ Pets Allowed' : '✓ No Pets'}</p>
                     </div>
-                    
-                    <button className="btn btn-primary btn-contact">Contact This Property</button>
-                    
+
+                    <button className="btn btn-primary btn-contact" onClick={handleOpenModal}>
+                        Request a Tour
+                    </button>
+
                 </div>
+                {isModalOpen && (
+                    <div className="modal-overlay" onClick={handleCloseModal}>
+                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                            <h2>Select a Date for Your Tour</h2>
+                            <DatePicker
+                                selected={selectedDate}
+                                onChange={handleDateChange}
+                                inline // Mostra il calendario direttamente nel modale
+                                minDate={new Date()} // Impedisce la selezione di date passate
+                            />
+                            <div className="modal-actions">
+                                <button className="btn btn-secondary" onClick={handleCloseModal}>
+                                    Cancel
+                                </button>
+                                <button className="btn btn-primary" onClick={handleSubmit}>
+                                    Submit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* --- SEZIONE COSTI --- */}
                 <section className="info-section">

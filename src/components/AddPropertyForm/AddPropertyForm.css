@@ -142,6 +142,11 @@
     border-color: var(--color-primary-dark, #c93e3e);
 }
 
+
+
+
+
+
 /* --- Stili per la responsività (rimangono uguali) --- */
 @media (max-width: 768px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .services-grid { grid-template-columns: 1fr; } }

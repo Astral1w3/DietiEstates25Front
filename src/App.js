@@ -45,8 +45,6 @@ function App() {
       <div className="App">
         <Header />
 
-
-
         <Suspense 
           fallback={
             <div style={spinnerContainerStyle}>

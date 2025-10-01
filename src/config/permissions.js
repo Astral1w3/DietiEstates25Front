@@ -9,7 +9,7 @@ export const ROLES = {
 // Mappa che associa un ruolo a un array di "chiavi di funzionalità"
 export const PERMISSIONS = {
   [ROLES.USER]: ['viewDetails', 'logout'],
-  [ROLES.AGENT]: ['viewDetails', 'addProperty', 'viewDashboard', 'logout'],
+  [ROLES.AGENT]: ['viewDetails', 'addProperty', 'viewDashboard', 'bookingsView', 'offersView', 'logout'],
   [ROLES.MANAGER]: ['viewDetails', 'createAgent', 'logout'],
   [ROLES.ADMIN]: ['viewDetails', 'changePassword', 'createManager', 'createAgent', 'logout'],
 };
@@ -23,4 +23,6 @@ export const MENU_OPTIONS = {
     createManager: 'Create Manager',
     changePassword: 'Change Password',
     logout: 'Log Out',
+    bookingsView: 'Bookings View',
+    offersView: 'Offers View',
 };

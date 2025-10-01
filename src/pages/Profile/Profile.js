@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { ROLES } from '../../config/permissions';
 
 // Importa tutti i nuovi componenti
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu';
@@ -10,6 +9,8 @@ import CreateUserForm from '../../components/CreateUserForm/CreateUserForm';
 import ChangePasswordForm from '../../components/ChangePasswordForm/ChangePasswordForm';
 import AgentDashboard from '../../components/AgentDashboard/AgentDashboard';
 import Logout from '../../components/Logout/Logout'
+import BookingsView from '../../components/BookingsView/BookingsView';
+import OffersView from '../../components/OffersView/OffersView'
 
 import './Profile.css'; // Useremo questo CSS per il layout
 
@@ -35,6 +36,10 @@ const ProfilePage = () => {
                 return <ChangePasswordForm />;
             case 'logout':
                 return <Logout />;
+            case 'bookingsView':
+                return <BookingsView/>
+            case 'offersView':
+                return <OffersView/>
             default:
                 return <ViewProfileDetails />;
         }

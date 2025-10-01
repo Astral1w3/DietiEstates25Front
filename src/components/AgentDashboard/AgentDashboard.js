@@ -93,7 +93,7 @@ const AgentDashboard = () => {
                     </div>
                 </div>
                 <div className="table-container">
-                    <table className="property-table">
+                    <table className="data-table">
                         <thead>
                             <tr>
                                 <th>Address</th>

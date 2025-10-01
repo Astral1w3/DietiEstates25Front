@@ -1,0 +1,138 @@
+/* BookingsView.css - Stile coerente con il nuovo design */
+
+/* 1. Layout Principale della Pagina
+-------------------------------------------------- */
+.bookings-view {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.bookings-view h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: var(--spacing-sm);
+    color: var(--color-text);
+}
+
+.bookings-view hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-xl);
+}
+
+/* 2. Grid per le Statistiche (riutilizzato da OffersView)
+-------------------------------------------------- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-xxl);
+}
+
+/* 3. Sezione Tabella Prenotazioni
+-------------------------------------------------- */
+.bookings-table-section {
+    background-color: var(--color-background);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: var(--spacing-lg);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+/* 4. Filtri (riutilizzato da OffersView)
+-------------------------------------------------- */
+.filter-tabs {
+    display: flex;
+    gap: var(--spacing-sm);
+    border-bottom: 2px solid var(--color-border);
+}
+
+.filter-tabs button {
+    background: none; border: none; padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer; font-size: 1rem; font-weight: 600; color: #6c757d;
+    position: relative; top: 2px; transition: color 0.2s ease;
+}
+
+.filter-tabs button:hover { color: var(--color-text); }
+
+.filter-tabs button.active {
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+}
+
+/* 5. Stile della Tabella Dati
+-------------------------------------------------- */
+.table-container {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.bookings-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.bookings-table thead th {
+    padding: var(--spacing-md) var(--spacing-lg); text-align: left;
+    background-color: #f8f9fa; font-size: 0.8rem; font-weight: 700;
+    color: #6c757d; text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.bookings-table tbody td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: middle;
+}
+
+.bookings-table tbody tr:last-child td { border-bottom: none; }
+
+.bookings-table tbody tr:hover { background-color: #f8f9fa; }
+
+/* 6. Stili Specifici per le Celle (riutilizzati e adattati)
+-------------------------------------------------- */
+.property-link {
+    font-weight: 600; color: var(--color-text); text-decoration: none;
+}
+.property-link:hover { color: var(--color-primary); }
+
+.client-info small { color: #6c757d; font-size: 0.85rem; }
+
+/* I badge di stato usano le classi globali, quindi funzioneranno senza modifiche */
+
+/* Pulsanti di Azione */
+.actions-cell {
+    display: flex;
+    justify-content: flex-start; /* Allinea a sinistra di default */
+    align-items: center;
+    gap: var(--spacing-sm, 8px);
+}
+
+.btn-action {
+    padding: 8px 16px; font-size: 0.85rem; font-weight: 600;
+    border-radius: var(--border-radius); border: none; color: white;
+    cursor: pointer; transition: opacity 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-action:hover { opacity: 0.85; }
+
+/* Colori specifici per i pulsanti di BookingsView */
+.btn-action.confirm { background-color: #28a745; }
+.btn-action.cancel  { background-color: #dc3545; }
+.btn-action.complete{ background-color: #007bff; }

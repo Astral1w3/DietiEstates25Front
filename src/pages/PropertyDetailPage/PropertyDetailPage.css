@@ -114,6 +114,131 @@
     margin-top: var(--spacing-md);
 }
 
+/* src/pages/PropertyDetailPage/modal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+.modal-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  gap: 10px;
+}
+
+/* src/pages/PropertyDetailPage/datepicker-custom.css */
+
+/* --- Container Principale --- */
+/* Diamo al calendario gli stessi bordi arrotondati e ombre del resto della UI */
+/* Incolla questo in fondo al tuo file PropertyDetailPage.css */
+
+/* --- Stili personalizzati per React Datepicker (VERSIONE GRANDE) --- */
+
+.react-datepicker {
+    font-family: inherit;
+    border: 1px solid var(--color-border, #e0e0e0);
+    border-radius: var(--border-radius, 8px);
+    box-shadow: var(--box-shadow, 0 4px 12px rgba(0,0,0,0.1));
+    
+    /* AUMENTO: Aumentiamo la dimensione del font di base per tutto il calendario */
+    font-size: 1rem; 
+}
+
+/* Rende l'intero layout del calendario più largo */
+ .react-datepicker__month-container {
+    width: 100%;
+}
+
+.react-datepicker__header {
+    background-color: var(--color-surface, #f8f9fa);
+    border-bottom: 1px solid var(--color-border, #e0e0e0);
+    border-top-left-radius: var(--border-radius, 8px);
+    border-top-right-radius: var(--border-radius, 8px);
+    padding: 20px; /* AUMENTO: Più spazio nell'header */
+}
+
+.react-datepicker__current-month {
+    font-size: 1.25rem; /* AUMENTO: Titolo del mese più grande */
+    font-weight: 700;
+    color: var(--color-text, #333);
+    padding-bottom: 15px; /* AUMENTO: Più spazio sotto il titolo */
+}
+
+ .react-datepicker__navigation {
+    top: 18px; /* Adattiamo la posizione delle frecce */
+}
+
+ .react-datepicker__navigation-icon::before {
+    border-color: var(--color-text, #333);
+    border-width: 3px 3px 0 0; /* AUMENTO: Frecce più spesse */
+    height: 10px; /* AUMENTO: Dimensioni frecce */
+    width: 10px; /* AUMENTO: Dimensioni frecce */
+}
+
+ .react-datepicker__day-name,
+.react-datepicker__day {
+    /* AUMENTO: Aumentiamo le dimensioni di ogni cella del giorno */
+    width: 2.5rem;
+    height: 2.5rem;
+    line-height: 2.5rem; /* Centra verticalmente il numero */
+    margin: 0.2rem; /* AUMENTO: Più spazio tra i giorni */
+}
+
+.react-datepicker__day-name {
+    color: #888;
+    font-weight: 700;
+}
+
+.react-datepicker__day {
+    color: var(--color-text, #333);
+    transition: all 0.2s ease-in-out;
+}
+
+.react-datepicker__day:hover {
+    background-color: var(--color-surface, #f0f0f0);
+    border-radius: 50%;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day--keyboard-selected {
+    background-color: #e63946;
+    color: #fff;
+    border-radius: 50%;
+}
+.react-datepicker__day--selected:hover {
+    background-color: #d62839;
+}
+
+.react-datepicker__day--outside-month {
+    color: #ccc;
+}
+
 /* Aggiungiamo un po' di reattività come da tue media queries */
 @media (max-width: 768px) {
     .detail-grid {
