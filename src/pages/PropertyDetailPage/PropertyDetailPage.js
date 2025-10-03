@@ -25,7 +25,7 @@
     const PropertyDetailPage = () => {
 
         const { propertyId } = useParams(); 
-        const property = mockProperties.find(p => p.id === parseInt(propertyId));
+        const property = [];//mockProperties.find(p => p.id === parseInt(propertyId));
 
         const [isTourModalOpen, setIsTourModalOpen] = useState(false);
         const [selectedDate, setSelectedDate] = useState(null);

@@ -29,3 +29,10 @@
 .page-search-form button:hover {
     background-color: var(--color-primary-dark);
 }
+
+.geopify-context{
+    background-color: black;
+}
+.geopify-geocoder-autocomplete{
+    background-color: black;
+}
