@@ -22,8 +22,12 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
         : 'Indirizzo non disponibile';
 
     const displayLocation = property.address
-        ? `${property.address.municipality}` // Usiamo 'municipality' invece del vecchio 'city'
+        ? `${property.address.municipality.municipalityName }` // Usiamo 'municipality' invece del vecchio 'city'
         : 'Località non disponibile';
+
+    const displayZipCode = property.address
+        ? `${property.address.municipality.zipCode }` // Usiamo 'municipality' invece del vecchio 'city'
+        : 'ZipCode non disponibile';
     
     // Formattiamo il prezzo per la valuta locale
     const formattedPrice = property.price 
@@ -51,7 +55,7 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
                     </p>
                     {/* --- CORREZIONE 4: USA LE STRINGHE CREATE INVECE DEGLI OGGETTI --- */}
                     <p className="card-address">{displayAddress}</p>
-                    <p className="card-city">{displayLocation}</p>
+                    <p className="card-city">{displayLocation} - {displayZipCode}</p>
                     <button className="card-cta-btn">Maggiori Dettagli</button>
                 </div>
             </div>

@@ -37,7 +37,7 @@ const SearchBar = () => {
             
                 {/* Questo è il componente di autocompletamento */}
                 <GeoapifyGeocoderAutocomplete
-                    placeholder="Cerca per città o regione (es. Napoli)"
+                    placeholder="Cerca per città o regione "
                     
                     // --- CONFIGURAZIONE SPECIFICA PER LA RICERCA ---
                     // 'type' dice a Geoapify cosa cercare. 'city' è perfetto.

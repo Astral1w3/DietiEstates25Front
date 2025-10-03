@@ -65,40 +65,11 @@ body, html {
     text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
 }
 
-
-.search-form {
-  display: flex;
-  width: 100%;
-  max-width: 600px;
-  background-color: var(--color-background);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.search-form input {
-  flex-grow: 1;
-  border: none;
-  padding: 18px 24px;
-  font-size: 18px;
-  outline: none;
-}
-
-.search-form button {
-  background-color: var(--color-primary);
-  border: none;
-  padding: 0 var(--spacing-lg);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color var(--transition-speed) ease;
-}
-.search-form button:hover { background-color: var(--color-primary-dark); }
-.search-form button svg { color: var(--color-text-light); }
-
 .hamburger-menu { display: none; } /* Gestito in media query */
 
-
+.search-container{
+    width: 80%;
+}
 
 /* --- Media Queries per la Reattività (invariate) --- */
 /* ... le tue media queries rimangono le stesse ... */
