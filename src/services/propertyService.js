@@ -1,37 +1,47 @@
-const API_BASE_URL = '/api'; // O 'http://localhost:8080/api' se il backend è su un'altra porta
+import api from './api'; // Corretto il percorso
 
 /**
- * Funzione per creare una nuova proprietà.
- * Gestisce la chiamata fetch, la gestione degli errori e la restituzione dei dati.
- * @param {object} payload - L'oggetto contenente i dati della proprietà da inviare.
- * @returns {Promise<object>} - Una Promise che si risolve con i dati della proprietà creata.
- * @throws {Error} - Lancia un errore se la chiamata fallisce.
+ * Recupera una singola proprietà tramite il suo ID.
+ * @param {number | string} propertyId - L'ID della proprietà.
+ * @returns {Promise<object>}
  */
-export const createProperty = async (payload) => {
+export const getPropertyById = async (propertyId) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/add`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
-        });
-
-        if (!response.ok) {
-            // Se il server risponde con un errore, cerchiamo di leggere il messaggio
-            // e lanciamo un errore che verrà catturato nel componente.
-            const errorData = await response.json().catch(() => ({})); // .catch per evitare errori se il corpo non è JSON
-            throw new Error(errorData.message || `Error: ${response.status} ${response.statusText}`);
-        }
-
-        // Se la chiamata ha successo, restituiamo i dati JSON.
-        return await response.json();
-
+        const response = await api.get(`/properties/${propertyId}`);
+        return response.data;
     } catch (error) {
-        // Rilanciamo l'errore per permettere al componente di gestirlo.
-        // Questo cattura sia gli errori di rete (es. server non raggiungibile) 
-        // sia gli errori che abbiamo lanciato manualmente sopra.
-        console.error("API Error in createProperty:", error);
+        console.error(`Errore nel recupero della proprietà con ID ${propertyId}:`, error);
+        throw error;
+    }
+};
+
+/**
+ * Cerca le proprietà in base a una località.
+ * @param {string} location - La località da cercare.
+ * @returns {Promise<Array>}
+ */
+export const searchPropertiesByLocation = async (location) => {
+    if (!location) return [];
+    try {
+        const response = await api.get(`/properties/search?location=${location}`);
+        return response.data;
+    } catch (error) {
+        console.error("Errore nel recupero delle proprietà:", error);
+        throw error;
+    }
+};
+
+/**
+ * Crea una nuova proprietà.
+ * @param {object} propertyData - I dati della proprietà.
+ * @returns {Promise<object>}
+ */
+export const createProperty = async (propertyData) => {
+    try {
+        const response = await api.post('/properties', propertyData); // Corretto: usa 'api'
+        return response.data;
+    } catch (error) {
+        console.error("Errore nella creazione della proprietà:", error);
         throw error;
     }
 };

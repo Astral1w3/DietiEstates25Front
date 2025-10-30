@@ -7,18 +7,21 @@ const RoleBasedProtectedRoute = ({ children, allowedRoles }) => {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    // Salviamo la pagina che stava cercando di visitare, così possiamo
-    // reindirizzarlo lì dopo il login.
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  const isAuthorized = allowedRoles.includes(user?.role);
+  // Estrai i ruoli dell'utente dal token decodificato.
+  // Se non ci sono ruoli, usa un array vuoto per sicurezza.
+  console.log(user);
+  // Controlla se ALMENO UNO dei ruoli dell'utente è presente
+  // nella lista dei ruoli permessi per questa rotta.
+  const isAuthorized = allowedRoles.includes(user?.role)
 
   if (!isAuthorized) {
+    // Reindirizza alla homepage se l'utente non ha i permessi
     return <Navigate to="/" replace />; 
   }
 
-  // Se entrambi i controlli passano, l'utente può vedere la pagina.
   return children;
 };
 

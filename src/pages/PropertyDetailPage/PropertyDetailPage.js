@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import { useParams, Link, useLocation, useSearchParams} from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+
+// --- IMPORTA LE FUNZIONI DAI FILE DI SERVIZIO ---
+import { getPropertyById } from '../../services/propertyService';
+import { bookVisit } from '../../services/visitService';
+import { createOffer } from '../../services/offerService';
 
 // --- Componenti UI ---
 import PropertyGallery from '../../components/PropertyGallery/PropertyGallery';
@@ -26,20 +30,25 @@ const PropertyDetailPage = () => {
     const [offerPrice, setOfferPrice] = useState('');
     const [offerError, setOfferError] = useState('');
 
-    // HOOKS: Per ottenere l'ID dalla URL, navigare e controllare l'autenticazione
+    // HOOKS: Per ottenere l'ID dalla URL e controllare l'autenticazione
     const { propertyId } = useParams();
-    const { isAuthenticated} = useAuth(); // Assumiamo che il contesto fornisca anche i dati dell'utente
+    const { isAuthenticated } = useAuth();
+    const location = useLocation();
 
+
+    // 3. Determina l'URL di ritorno.
+    //    Usa quello passato nello stato, altrimenti usa un fallback generico.
+    console.log("location:", location)
+    const backLinkUrl = location.state?.from || '/properties';
 
     // --- EFFETTO PRINCIPALE: Caricamento dati dal backend ---
     useEffect(() => {
-        // Funzione asincrona per caricare i dati dell'immobile
         const fetchProperty = async () => {
             if (!propertyId) return;
             try {
                 setLoading(true);
-                const response = await axios.get(`http://localhost:8080/properties/${propertyId}`);
-                setProperty(response.data);
+                const data = await getPropertyById(propertyId);
+                setProperty(data);
                 setError(null);
             } catch (err) {
                 console.error("Errore nel recupero dei dettagli dell'immobile:", err);
@@ -51,33 +60,27 @@ const PropertyDetailPage = () => {
         };
 
         fetchProperty();
-    }, [propertyId]); // Si riattiva solo se l'ID nella URL cambia
+    }, [propertyId]);
 
     // --- GESTORI DI EVENTI PER LE AZIONI ---
-
-    // Prenotazione visita
     const handleTourSubmit = async () => {
         if (!selectedDate) {
             alert("Per favore, seleziona una data.");
             return;
         }
         try {
-            // L'endpoint deve corrispondere a quello del tuo backend
-            await axios.post('http://localhost:8080/visits/book', {
+            await bookVisit({
                 propertyId: property.idProperty,
-                visitDate: selectedDate.toISOString(), // Invia la data in formato standard
-                // Il backend ricaverà l'utente dal token di autenticazione
+                visitDate: selectedDate.toISOString(),
             });
             alert(`Visita richiesta con successo per il giorno: ${selectedDate.toLocaleDateString()}`);
             setIsTourModalOpen(false);
             setSelectedDate(null);
         } catch (error) {
-            console.error("Errore nella prenotazione della visita:", error);
             alert("Si è verificato un errore. Riprova più tardi.");
         }
     };
 
-    // Invio offerta
     const handleOfferSubmit = async () => {
         const priceValue = parseFloat(offerPrice);
 
@@ -91,42 +94,33 @@ const PropertyDetailPage = () => {
         }
 
         try {
-            // L'endpoint deve corrispondere a quello del tuo backend
-            await axios.post('http://localhost:8080/offers/create', {
+            await createOffer({
                 propertyId: property.idProperty,
                 offerPrice: priceValue,
-                // Il backend ricaverà l'utente dal token di autenticazione
             });
             setOfferError('');
             alert(`Offerta di ${priceValue.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })} inviata con successo!`);
             setIsOfferModalOpen(false);
             setOfferPrice('');
         } catch (error) {
-            console.error("Errore nell'invio dell'offerta:", error);
             setOfferError("Errore del server. Riprova più tardi.");
         }
     };
 
     // --- LOGICA DI RENDER ---
-
-    // Gestione degli stati di caricamento ed errore
     if (loading) return <div className="property-detail-container"><h2>Caricamento...</h2></div>;
     if (error) return <div className="property-detail-container"><h2>{error}</h2></div>;
     if (!property) return <div className="property-detail-container"><h2>Immobile non trovato.</h2></div>;
 
-    // Preparazione dati per la vista
     const isForRent = property.saleTypes.some(st => st.saleType.toLowerCase() === 'rent');
     const fullAddress = `${property.address.street}, ${property.address.houseNumber} - ${property.address.municipality.municipalityName} (${property.address.municipality.province.acronym})`;
-    
-    // Lista dei servizi da mostrare
     const featureList = property.services.map(service => service.serviceName);
-
     return (
         <div className="property-detail-container">
             <main className="property-detail-main">
-                <Link to="/properties" className="back-to-search-link">← Torna alla Ricerca</Link>
+                <Link to={backLinkUrl} className="back-to-search-link">← Torna alla Ricerca</Link>
                 {/* Il componente gallery ora riceve le immagini dal backend */}
-                <PropertyGallery images={property.images} />
+                <PropertyGallery images={property.imageUrls} />
                 
                 <div className="detail-grid">
                     <div className="info-primary">

@@ -1,13 +1,16 @@
 import './LoginRegisterModal.css'; 
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext'; // <-- Importa il contesto
 
 const RegisterModal = ({ isOpen, onSwitch }) => {
-  // Stati specifici per la registrazione
+  const { register } = useAuth(); // <-- Ottieni la funzione dal contesto
+
   const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
+  const [name, setName] = useState(''); // Questo sarà il nostro 'username'
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(''); // Stato per il messaggio di successo
 
   if (!isOpen) {
     return null;
@@ -17,19 +20,33 @@ const RegisterModal = ({ isOpen, onSwitch }) => {
     e.stopPropagation();
   };
 
-  function registerToDb(){
-
-  }
-
-  const handleRegisterSubmit = (e) => {
+  const handleRegisterSubmit = async (e) => {
     e.preventDefault();
+    // Resetta i messaggi
+    setError('');
+    setSuccess('');
+
     if (password !== confirmPassword) {
-      setError("Passwords do not match!");
+      setError("Le password non coincidono!");
       return;
     }
-    setError('');
-    registerToDb();
-    onSwitch('none');
+
+    try {
+      // Chiama la funzione di registrazione dal contesto
+      await register(email, name, password);
+      
+      // Se la registrazione ha successo
+      setSuccess("Registrazione completata! Ora puoi effettuare il login.");
+      
+      // Opzionale: dopo 2 secondi, passa al modale di login
+      setTimeout(() => {
+        onSwitch('login');
+      }, 2000);
+
+    } catch (err) {
+      // Se il backend restituisce un errore (es. "Email già in uso")
+      setError(err.response?.data || "Si è verificato un errore. Riprova.");
+    }
   };
 
   return (
@@ -82,7 +99,10 @@ const RegisterModal = ({ isOpen, onSwitch }) => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+          
           {error && <p className="error-message">{error}</p>}
+          {success && <p className="success-message">{success}</p>}
+          
           <button type="submit" className="btn btn-primary btn-login">Register</button>
         </form>
       </div>

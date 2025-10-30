@@ -26,7 +26,7 @@ function App() {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    height: '100vh', // Occupa tutta l'altezza per centrare
+    height: '100vh',
   };
 
   const spinnerStyle = {

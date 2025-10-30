@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useLocation} from 'react-router-dom';
 import axios from 'axios';
 
 // Componenti UI
@@ -10,6 +10,8 @@ import FilterDropdown from '../../components/FilterDropdown/FilterDropdown';
 
 // CSS
 import './PropertiesPage.css';
+
+import { searchPropertiesByLocation } from '../../services/propertyService'; // Assicurati che il percorso sia corretto
 
 // --- Costanti ---
 // Idealmente, anche questa lista dovrebbe arrivare dal backend per essere dinamica
@@ -31,58 +33,63 @@ const initialFilters = {
     minPrice: '', maxPrice: '', rooms: '', energyClass: '', municipality: '', transactionType: 'any'
 };
 
-
-// --- Componente Principale ---
 const PropertiesPage = () => {
-    // STATO 1: Risultati originali dalla ricerca (non cambiano finché non si fa una nuova ricerca)
     const [originalProperties, setOriginalProperties] = useState([]);
-    // STATO 2: Proprietà visualizzate, che possono essere filtrate a partire da quelle originali
     const [displayedProperties, setDisplayedProperties] = useState([]);
     
-    // Altri stati per la UI
+    // --- NUOVI STATI PER UNA UI MIGLIORE ---
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Altri stati UI (invariati)
     const [hoveredPropertyId, setHoveredPropertyId] = useState(null);
     const [isFilterOpen, setFilterOpen] = useState(false);
     const [filters, setFilters] = useState(initialFilters);
     const [selectedServices, setSelectedServices] = useState([]);
     const [searchParams] = useSearchParams();
 
-    // Hook principale per recuperare i dati dal backend quando la URL cambia
+    // --- useEffect REFACTORED ---
+    // Ora si occupa solo di orchestrare la chiamata e aggiornare lo stato.
     useEffect(() => {
         const location = searchParams.get('location');
         const type = searchParams.get('type');
 
         const fetchProperties = async () => {
-            if (location) {
-                try {
-                    const response = await axios.get(`http://localhost:8080/properties/search?location=${location}`);
-                    let fetchedData = response.data;
-                    console.log(fetchedData);
-
-                    // Se l'URL contiene anche un filtro 'type', lo applichiamo subito
-                    if (type === 'buy' || type === 'rent') {
-                        fetchedData = fetchedData.filter(p => p.transactionType === type);
-                        setFilters(prev => ({ ...prev, transactionType: type }));
-                    } else {
-                        setFilters(initialFilters); // Se non c'è type, resetta il filtro
-                    }
-
-                    setOriginalProperties(fetchedData); // Salviamo i dati originali
-                    setDisplayedProperties(fetchedData); // E li mostriamo
-                } catch (error) {
-                    console.error("Errore nel recupero delle proprietà:", error);
-                    setOriginalProperties([]);
-                    setDisplayedProperties([]);
-                }
-            } else {
-                // Se non c'è una location nella URL, non mostriamo risultati
+            if (!location) {
                 setOriginalProperties([]);
                 setDisplayedProperties([]);
+                return; // Esce se non c'è una location
+            }
+            
+            setIsLoading(true); // Inizia il caricamento
+            setError(null);     // Resetta errori precedenti
+
+            try {
+                // La logica di chiamata API è ora nascosta nel servizio
+                let fetchedData = await searchPropertiesByLocation(location);
+                
+                if (type === 'buy' || type === 'rent') {
+                    fetchedData = fetchedData.filter(p => p.transactionType === type);
+                    setFilters(prev => ({ ...prev, transactionType: type }));
+                } else {
+                    setFilters(initialFilters);
+                }
+
+                setOriginalProperties(fetchedData);
+                setDisplayedProperties(fetchedData);
+            } catch (err) {
+                console.error("Fallimento nel fetch delle proprietà:", err);
+                setError("Impossibile caricare i risultati. Riprova più tardi."); // Imposta un messaggio di errore per l'utente
+                setOriginalProperties([]);
+                setDisplayedProperties([]);
+            } finally {
+                setIsLoading(false); // Finisce il caricamento (sia in caso di successo che di errore)
             }
         };
 
         fetchProperties();
-    }, [searchParams]); // Questo hook si attiva ogni volta che i parametri della URL cambiano
-
+    }, [searchParams]);
+    
     // Funzione per applicare i filtri sui dati già caricati
     const handleApplyFilters = () => {
         let filtered = [...originalProperties]; // Si parte sempre dai dati originali!
@@ -144,9 +151,15 @@ const PropertiesPage = () => {
         );
     };
     
+    const location = useLocation();
+
     // Titolo dinamico basato sulla ricerca
     const locationQuery = searchParams.get('location');
     const pageTitle = locationQuery ? `Risultati per: "${locationQuery}"` : "Cerca una località per iniziare";
+    
+    // 3. Costruisci l'URL di ritorno che include percorso e parametri di ricerca
+    const backUrlFromSearch = location.pathname + location.search;
+
 
     return (
         <>
@@ -180,13 +193,20 @@ const PropertiesPage = () => {
                         {displayedProperties.length > 0 ? (
                             displayedProperties.map(property => (
                                 // Usa 'idProperty' come definito nel tuo modello Java
-                                <Link to={`/property/${property.idProperty}`} key={property.idProperty} className="property-card-link">
+                                <Link 
+                                    to={`/property/${property.idProperty}`} 
+                                    key={property.idProperty} 
+                                    className="property-card-link"
+                                    // Qui passiamo l'URL di ritorno alla pagina successiva
+                                    state={{ from: backUrlFromSearch }}
+                                >
                                     <PropertyCard 
                                         property={property}
                                         onMouseEnter={() => setHoveredPropertyId(property.idProperty)}
                                         onMouseLeave={() => setHoveredPropertyId(null)}
                                     />
                                 </Link>
+
                             ))
                         ) : (
                             <p>Nessun risultato trovato. Prova una nuova ricerca.</p>
