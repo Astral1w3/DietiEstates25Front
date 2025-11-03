@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import './CreateUserForm.css'; // Creeremo questo file CSS
+import { createUser } from '../../services/userService'
+import { useAuth } from '../../context/AuthContext'
 
 const CreateUserForm = ({ roleToCreate }) => {
+    const { user } = useAuth();
     // Stato per i dati del nuovo utente
     const [formData, setFormData] = useState({
         username: '',
@@ -49,24 +52,33 @@ const CreateUserForm = ({ roleToCreate }) => {
 
         setIsLoading(true);
 
-        // 2. Simulazione di una chiamata API per creare l'utente
-        console.log('Creating new user:', { ...formData, role: roleToCreate.toLowerCase() });
 
-        setTimeout(() => {
-            // Simuliamo una risposta di successo dall'API
-            setMessage({ 
-                text: `${roleToCreate} "${formData.username}" created successfully!`, 
-                type: 'success' 
+        try {
+            // Prepara l'oggetto con tutti i dati necessari
+            const newUser = {
+                username: formData.username,
+                email: formData.email,
+                userPassword: formData.password,     // <-- CORRETTO
+                roleName: roleToCreate,// <-- CORRETTO
+                emailCreator:  user.email            // <-- CORRETTO
+            };
+
+            // Chiama la funzione del servizio passando l'oggetto
+            const createdUser = await createUser(newUser);
+
+            setMessage({
+                text: `${roleToCreate} "${createdUser.username}" creato con successo!`,
+                type: 'success'
             });
-            
-            // Svuota il form dopo il successo
-            setFormData({ username: '', email: '', password: '' });
-            setIsLoading(false);
 
-            // In caso di errore reale, faresti:
-            // setMessage({ text: 'An error occurred. Please try again.', type: 'error' });
-            // setIsLoading(false);
-        }, 1500);
+            setFormData({ username: '', email: '', password: '' });
+
+        } catch (error) {
+            // Gestisci l'errore che arriva dal servizio
+            setMessage({ text: 'Si è verificato un errore. Riprova.', type: 'error' });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (

@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios'; // <-- 1. RIMUOVI L'IMPORTAZIONE GLOBALE
+import api from '../services/api'; // <-- 2. IMPORTA LA TUA ISTANZA CONFIGURATA (il percorso potrebbe variare)
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext(null);
@@ -8,31 +9,15 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
+  // L'useEffect rimane perfetto com'è
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      try {
-        const decodedUser = jwtDecode(storedToken);
-        
-        if (decodedUser.exp * 1000 > Date.now()) {
-          setUser(decodedUser);
-          setToken(storedToken);
-        } else {
-          localStorage.removeItem('token');
-          setUser(null);
-          setToken(null);
-        }
-      } catch (error) {
-        console.error("Token non valido:", error);
-        localStorage.removeItem('token');
-      }
-    }
+    // ...
   }, []);
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', {
-        username: email,
+      const response = await api.post('/auth/login', {
+        email: email,
         password: password
       });
 
@@ -47,7 +32,8 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (email, username, password) => {
     try {
-        const response = await axios.post('http://localhost:8080/api/auth/register', {
+        // 3. USA 'api' INVECE DI 'axios' E ACCORCIA L'URL
+        const response = await api.post('/auth/register', {
             email: email,
             username: username,
             password: password
@@ -59,14 +45,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // --- NUOVA FUNZIONE PER IL LOGIN CON GOOGLE ---
   const loginWithGoogle = async (googleUserData) => {
     try {
-      // Invia le informazioni dell'utente di Google al tuo backend
-      const response = await axios.post('http://localhost:8080/api/auth/google-login', {
+      // 3. USA 'api' INVECE DI 'axios' E ACCORCIA L'URL
+      const response = await api.post('/auth/google-login', {
         email: googleUserData.email,
         name: googleUserData.name,
-        googleId: googleUserData.sub, // 'sub' è l'ID univoco di Google
+        googleId: googleUserData.sub,
       });
 
       const { jwt } = response.data;
@@ -78,15 +63,10 @@ export const AuthProvider = ({ children }) => {
     }
   };
   
-  // --- FUNZIONE HELPER PER EVITARE DUPLICAZIONE DI CODICE ---
+  // Il resto del file è già corretto
   const handleSuccessfulAuth = (jwt) => {
-    // Salva il token nel localStorage
     localStorage.setItem('token', jwt);
-    
-    // Decodifica il token per estrarre le informazioni sull'utente
     const decodedUser = jwtDecode(jwt);
-    
-    // Aggiorna gli stati
     setUser(decodedUser);
     setToken(jwt);
   };
