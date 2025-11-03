@@ -3,10 +3,9 @@ import { useParams, Link, useLocation, useSearchParams} from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 // --- IMPORTA LE FUNZIONI DAI FILE DI SERVIZIO ---
-import { getPropertyById } from '../../services/propertyService';
 import { bookVisit } from '../../services/visitService';
 import { createOffer } from '../../services/offerService';
-
+import { getPropertyById, trackPropertyView } from '../../services/propertyService'; 
 // --- Componenti UI ---
 import PropertyGallery from '../../components/PropertyGallery/PropertyGallery';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';
@@ -35,10 +34,32 @@ const PropertyDetailPage = () => {
     const { isAuthenticated } = useAuth();
     const location = useLocation();
 
+    useEffect(() => {
+    const fetchPropertyAndTrackView = async () => {
+        if (propertyId) {
+            try {
+                // Traccia la visualizzazione
+                await trackPropertyView(propertyId);
+
+                // Carica i dati della proprietà
+                setLoading(true);
+                const data = await getPropertyById(propertyId);
+                setProperty(data);
+                setError(null);
+            } catch (err) {
+                console.error("Errore nel recupero o tracciamento della proprietà:", err);
+                setError("Immobile non trovato o errore nel caricamento.");
+                setProperty(null);
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+        fetchPropertyAndTrackView();
+    }, [propertyId]); // Esegui l'effetto quando propertyId cambia
 
     // 3. Determina l'URL di ritorno.
     //    Usa quello passato nello stato, altrimenti usa un fallback generico.
-    console.log("location:", location)
     const backLinkUrl = location.state?.from || '/properties';
 
     // --- EFFETTO PRINCIPALE: Caricamento dati dal backend ---

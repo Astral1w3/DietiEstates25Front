@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import './FilterDropdown.css';
 
 // Dati di esempio
-const roomOptions = [0, 1, 2, 3, 4, 5]; 
+const roomOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9]; 
 const energyClassOptions = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
 const FilterDropdown = ({ 
@@ -42,8 +42,6 @@ const FilterDropdown = ({
                 <h3>Filters</h3>
                 <button onClick={onClose} className="close-btn">×</button>
             </div>
-        
-
 
             <div className="filter-content">
 
@@ -56,8 +54,8 @@ const FilterDropdown = ({
                             type="radio"
                             id="type-rent"
                             name="transactionType"
-                            value="rent"
-                            checked={filters.transactionType === 'rent'}
+                            value="Rent"
+                            checked={filters.transactionType === 'Rent'}
                             onChange={onFilterChange}
                         />
                         <label htmlFor="type-rent">Rent</label>
@@ -67,13 +65,13 @@ const FilterDropdown = ({
                     <div className="radio-item">
                         <input
                             type="radio"
-                            id="type-buy"
+                            id="type-sale"
                             name="transactionType"
-                            value="buy"
-                            checked={filters.transactionType === 'buy'}
+                            value="Sale"
+                            checked={filters.transactionType === 'Sale'}
                             onChange={onFilterChange}
                         />
-                        <label htmlFor="type-buy">Buy</label>
+                        <label htmlFor="type-sale">Sale</label>
                     </div>
 
                     {/* Opzione Any */}
@@ -98,14 +96,6 @@ const FilterDropdown = ({
                         <input type="number" name="minPrice" placeholder="Min Price" value={filters.minPrice} onChange={onFilterChange} className="filter-input" />
                         <input type="number" name="maxPrice" placeholder="Max Price" value={filters.maxPrice} onChange={onFilterChange} className="filter-input" />
                     </div>
-                </div>
-
-                {/* --- SEZIONE POSIZIONE --- */}
-                <div className="filter-section">
-                    <label>Position</label>
-                    <input type="text" name="municipality" placeholder="Municipality" value={filters.municipality} onChange={onFilterChange} />
-                    <input type="text" name="city" placeholder="City" value={filters.city} onChange={onFilterChange} />
-                    <input type="text" name="region" placeholder="Region" value={filters.region} onChange={onFilterChange} />
                 </div>
                 
                 {/* ---- NUOVA SEZIONE INSERITA QUI ---- */}

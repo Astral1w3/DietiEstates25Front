@@ -21,7 +21,7 @@ const availableServices = [
 ];
 
 const AddPropertyForm = () => {
-    const [propertyType, setPropertyType] = useState('rent');
+    const [propertyType, setPropertyType] = useState('Rent');
     const [formData, setFormData] = useState({
         price: '', description: '', sqMeters: '', rooms: '', address: '', civicNumber: '', energyClass: 'A'
     });
@@ -32,8 +32,52 @@ const AddPropertyForm = () => {
     const [images, setImages] = useState([]);
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
+    const [isCheckingAmenities, setIsCheckingAmenities] = useState(false); // Stato per il caricamento dei servizi
     const [selectedPlace, setSelectedPlace] = useState(null);
     const fileInputRef = useRef(null);
+
+    // --- NUOVA FUNZIONE PER VERIFICARE I SERVIZI NELLE VICINANZE ---
+    const checkNearbyAmenities = async (lat, lon) => {
+        setIsCheckingAmenities(true);
+        const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
+        const radius = 500;
+
+        const amenitiesToSearch = [
+            { category: 'education', serviceId: 'close to schools' },
+            { category: 'leisure.park', serviceId: 'close to parks' },
+            { category: 'public_transport', serviceId: 'close to public transport' }
+        ];
+
+        const updatedServices = { ...services };
+        const foundNames = [];
+
+        try {
+            await Promise.all(
+                amenitiesToSearch.map(async (amenity) => {
+                    const url = `https://api.geoapify.com/v2/places?categories=${amenity.category}&filter=circle:${lon},${lat},${radius}&limit=1&apiKey=${apiKey}`;
+                    const response = await fetch(url);
+                    const data = await response.json();
+
+                    if (data.features && data.features.length > 0) {
+                        updatedServices[amenity.serviceId] = true;
+                        // Aggiungiamo il nome del luogo trovato all'array
+                        const placeName = data.features[0].properties.name;
+                        if (placeName) {
+                            foundNames.push(placeName);
+                        }
+                    }
+                })
+            );
+            setServices(updatedServices);
+            return foundNames; // Restituisce l'array dei nomi
+        } catch (error) {
+            console.error("Errore durante la verifica dei servizi vicini:", error);
+            return []; // In caso di errore, restituisce un array vuoto
+        } finally {
+            setIsCheckingAmenities(false);
+        }
+    };
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -59,85 +103,96 @@ const AddPropertyForm = () => {
     };
 
     const resetForm = () => {
-        setPropertyType('rent');
-        setFormData({
-            price: '', description: '', sqMeters: '', rooms: '', address: '', civicNumber: '', energyClass: 'A'
-        });
-        setServices(
-            availableServices.reduce((acc, service) => ({ ...acc, [service.id]: false }), {})
-        );
+        setPropertyType('Rent');
+        setFormData({ price: '', description: '', sqMeters: '', rooms: '', address: '', civicNumber: '', energyClass: 'A' });
+        setServices(availableServices.reduce((acc, service) => ({ ...acc, [service.id]: false }), {}));
         setImages([]);
         setSelectedPlace(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-        setAddressDisplayValue(''); 
+        if (fileInputRef.current) fileInputRef.current.value = "";
+        setAddressDisplayValue('');
     };
 
-    const onPlaceSelect = (place) => {
+      const onPlaceSelect = async (place) => {
         if (!place) {
             setSelectedPlace(null);
             return;
         }
-        const { street, housenumber, lat, lon, formatted, city, postcode, state } = place.properties;
-        setFormData(prev => ({
-            ...prev,
-            address: street || '',
-            civicNumber: housenumber || ''
-        }));
+        const { street, housenumber, lat, lon, formatted, city, postcode, state, county } = place.properties;
+        setFormData(prev => ({ ...prev, address: street || '', civicNumber: housenumber || '' }));
         setAddressDisplayValue(formatted);
-        setSelectedPlace({
-            fullAddress: formatted, street, housenumber, city, postcode, state, latitude: lat, longitude: lon
-        });
+        const placeDetails = { fullAddress: formatted, street, housenumber, city, postcode, state, county, latitude: lat, longitude: lon };
+        setSelectedPlace(placeDetails);
+
+        // 1. Esegui la verifica e ottieni i nomi
+        const nearbyNames = await checkNearbyAmenities(placeDetails.latitude, placeDetails.longitude);
+
+        // 2. Se abbiamo trovato dei nomi, li aggiungiamo alla descrizione
+        if (nearbyNames.length > 0) {
+            const amenitiesText = "\n\nNelle immediate vicinanze: " + nearbyNames.join(', ') + ".";
+            
+            // Usiamo una funzione di aggiornamento per accodare il testo in modo sicuro
+            setFormData(prevFormData => ({
+                ...prevFormData,
+                description: (prevFormData.description || '') + amenitiesText
+            }));
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
+        setIsLoading(true);
 
         if (!selectedPlace) {
             setMessage({ text: 'Please select a valid address from the suggestions.', type: 'error' });
+            setIsLoading(false);
             return;
         }
-        
+
         if (!formData.price || !formData.address || !formData.description || !formData.sqMeters || !formData.rooms) {
             setMessage({ text: 'Please fill in all required fields.', type: 'error' });
+            setIsLoading(false);
             return;
         }
 
-        setIsLoading(true);
+        const servicesPayload = Object.entries(services)
+            .filter(([key, value]) => value === true)
+            .map(([key]) => ({ serviceName: key }));
 
-        // Prepara il payload esattamente come prima
+        const addressPayload = {
+            street: selectedPlace.street,
+            houseNumber: formData.civicNumber || selectedPlace.housenumber,
+            latitude: selectedPlace.latitude,
+            longitude: selectedPlace.longitude,
+            municipality: {
+                municipalityName: selectedPlace.city,
+                zipCode: selectedPlace.postcode,
+                province: {
+                    provinceName: selectedPlace.county || '',
+                    acronym: '',
+                    region: { regionName: selectedPlace.state }
+                }
+            }
+        };
+
         const payload = {
-            propertyDetails: {
-                price: formData.price,
-                description: formData.description,
-                square_meters: formData.sqMeters,
-                number_of_rooms: formData.rooms,
-                energy_class: formData.energyClass,
-            },
-            locationDetails: selectedPlace,
-            services: services,
-            propertyType: propertyType
+            price: formData.price,
+            description: formData.description,
+            squareMeters: formData.sqMeters,
+            numberOfRooms: formData.rooms,
+            energyClass: formData.energyClass,
+            saleType: propertyType,
+            services: servicesPayload,
+            address: addressPayload
         };
 
         try {
-            // Ora chiamiamo la nostra funzione di servizio pulita.
-            // Tutta la complessità di fetch, headers, etc. è nascosta.
-            const result = await createProperty(payload);
-
-            // Se la chiamata ha successo (non ha lanciato errori), gestiamo la UI
-            console.log('Property created successfully:', result);
-            setMessage({ text: 'Property listed successfully!', type: 'success' });
+            const result = await createProperty(payload, images);
+            setMessage({ text: 'Proprietà inserita con successo!', type: 'success' });
             resetForm();
-
         } catch (error) {
-            // Se createProperty lancia un errore, lo catturiamo qui
-            // e lo mostriamo all'utente.
             setMessage({ text: error.message, type: 'error' });
-
         } finally {
-            // Il loading si disattiva sempre, sia in caso di successo che di errore.
             setIsLoading(false);
         }
     };
@@ -148,19 +203,19 @@ const AddPropertyForm = () => {
                 <h2>Add New Property</h2>
                 <hr />
                 <form onSubmit={handleSubmit} noValidate>
-                    {/* ... (resto del form invariato) ... */}
                     <div className="form-group">
                         <label>Listing Type</label>
                         <div className="type-selector">
-                            <input type="radio" id="rent" name="propertyType" value="rent" checked={propertyType === 'rent'} onChange={() => setPropertyType('rent')} />
-                            <label htmlFor="rent">For Rent</label>
-                            <input type="radio" id="sale" name="propertyType" value="sale" checked={propertyType === 'sale'} onChange={() => setPropertyType('sale')} />
-                            <label htmlFor="sale">For Sale</label>
+                            <input type="radio" id="Rent" name="propertyType" value="Rent" checked={propertyType === 'Rent'} onChange={() => setPropertyType('Rent')} />
+                            <label htmlFor="Rent">For Rent</label>
+                            <input type="radio" id="Sale" name="propertyType" value="Sale" checked={propertyType === 'Sale'} onChange={() => setPropertyType('Sale')} />
+                            <label htmlFor="Sale">For Sale</label>
                         </div>
                     </div>
+                    {/* ... (resto del form grid) ... */}
                     <div className="form-grid">
                         <div className="form-group">
-                            <label htmlFor="price">{propertyType === 'rent' ? 'Monthly Price (€)' : 'Total Price (€)'}</label>
+                            <label htmlFor="price">{propertyType === 'Rent' ? 'Monthly Price (€)' : 'Total Price (€)'}</label>
                             <input type="number" id="price" name="price" value={formData.price} onChange={handleInputChange} required />
                         </div>
                         <div className="form-group">
@@ -190,11 +245,7 @@ const AddPropertyForm = () => {
                             lang='it'
                             onUserInput={(value) => {
                                 setAddressDisplayValue(value);
-                                setFormData(prev => ({
-                                    ...prev,
-                                    address: value,
-                                    civicNumber: ''
-                                }));
+                                setFormData(prev => ({ ...prev, address: value, civicNumber: '' }));
                                 setSelectedPlace(null);
                             }}
                         />
@@ -205,25 +256,22 @@ const AddPropertyForm = () => {
                         <input type="text" id="civicNumber" name="civicNumber" value={formData.civicNumber} onChange={handleInputChange} />
                     </div>
 
-                    {/* ... (resto del form invariato) ... */}
                     <div className="form-group full-width">
                         <label htmlFor="description">Description</label>
                         <textarea id="description" name="description" rows="5" value={formData.description} onChange={handleInputChange} required></textarea>
                     </div>
 
                     <div className="form-group full-width">
-                        <label className="group-legend">Services</label>
+                        <div className="services-header">
+                            <label className="group-legend">Services</label>
+                            {/* --- INDICATORE DI CARICAMENTO PER I SERVIZI --- */}
+                            {isCheckingAmenities && <span className="amenities-loader">[Verifica servizi nelle vicinanze...]</span>}
+                        </div>
                         <div className="checkbox-group">
                             {availableServices.map(service => (
                                 <div key={service.id} className="checkbox">
                                     <label className="checkbox-wrapper">
-                                        <input 
-                                            type="checkbox" 
-                                            className="checkbox-input"
-                                            name={service.id}
-                                            checked={services[service.id]}
-                                            onChange={handleServiceChange}
-                                        />
+                                        <input type="checkbox" className="checkbox-input" name={service.id} checked={services[service.id]} onChange={handleServiceChange} />
                                         <span className="checkbox-tile">
                                             <span className="checkbox-icon">{service.emoji}</span>
                                             <span className="checkbox-label">{service.label}</span>
@@ -233,15 +281,11 @@ const AddPropertyForm = () => {
                             ))}
                         </div>
                     </div>
-
+                    
+                    {/* ... (resto del form, immagini, etc.) ... */}
                     <div className="form-group full-width">
                         <label>Images (Max 7)</label>
-                        <input 
-                            type="file" 
-                            multiple accept="image/*"
-                            ref={fileInputRef}
-                            onChange={handleImageChange}
-                            style={{ display: 'none' }} />
+                        <input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
                         <button type="button" className="upload-btn" onClick={() => fileInputRef.current.click()}>  
                             <FaUpload /> Select Images
                         </button>

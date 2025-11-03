@@ -36,7 +36,6 @@ const MapDisplay = ({ properties, hoveredPropertyId }) => {
         typeof p.address.latitude === 'number' && 
         typeof p.address.longitude === 'number'
     );
-    console.log(validProperties);
 
     // --- CORREZIONE 2: CENTRA LA MAPPA SUI RISULTATI ---
     // Se ci sono risultati, centra la mappa sul primo. Altrimenti, usa un centro di default (es. Roma).
@@ -70,8 +69,9 @@ const MapDisplay = ({ properties, hoveredPropertyId }) => {
 
             {/* --- CORREZIONE 3: MAPPA L'ARRAY FILTRATO E USA I CAMPI CORRETTI --- */}
             {validProperties.map(property => {
+                console.log(property)
                 // Formattiamo l'indirizzo per il popup per evitare l'errore "Objects are not valid"
-                const popupAddress = `${property.address.street}, ${property.address.municipality}`;
+                const popupAddress = `${property.address.street}, ${property.address.municipality.municipalityName}`;
                 const formattedPrice = new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(property.price);
 
                 return (

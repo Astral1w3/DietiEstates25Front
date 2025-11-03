@@ -51,53 +51,46 @@ const PropertiesPage = () => {
     // --- useEffect REFACTORED ---
     // Ora si occupa solo di orchestrare la chiamata e aggiornare lo stato.
     useEffect(() => {
-        const location = searchParams.get('location');
-        const type = searchParams.get('type');
+        const locationQuery = searchParams.get('location');
+        const typeQuery = searchParams.get('type');
 
         const fetchProperties = async () => {
-            if (!location) {
-                setOriginalProperties([]);
-                setDisplayedProperties([]);
-                return; // Esce se non c'è una location
-            }
-            
-            setIsLoading(true); // Inizia il caricamento
-            setError(null);     // Resetta errori precedenti
-
+            if (!locationQuery) { /* ... */ return; }
+            setIsLoading(true);
+            setError(null);
             try {
-                // La logica di chiamata API è ora nascosta nel servizio
-                let fetchedData = await searchPropertiesByLocation(location);
-                
-                if (type === 'buy' || type === 'rent') {
-                    fetchedData = fetchedData.filter(p => p.transactionType === type);
-                    setFilters(prev => ({ ...prev, transactionType: type }));
-                } else {
-                    setFilters(initialFilters);
+                const fetchedData = await searchPropertiesByLocation(locationQuery);
+                let initialData = fetchedData;
+                const newFilters = { ...initialFilters };
+
+                if (typeQuery === 'buy' || typeQuery === 'rent') {
+                    // --- CORREZIONE QUI 1/2 ---
+                    // Usa 'saleType' che è il campo corretto nel JSON
+                    initialData = fetchedData.filter(p => p.saleType === typeQuery);
+                    newFilters.transactionType = typeQuery;
                 }
 
                 setOriginalProperties(fetchedData);
-                setDisplayedProperties(fetchedData);
+                setDisplayedProperties(initialData);
+                setFilters(newFilters);
             } catch (err) {
-                console.error("Fallimento nel fetch delle proprietà:", err);
-                setError("Impossibile caricare i risultati. Riprova più tardi."); // Imposta un messaggio di errore per l'utente
-                setOriginalProperties([]);
-                setDisplayedProperties([]);
-            } finally {
-                setIsLoading(false); // Finisce il caricamento (sia in caso di successo che di errore)
-            }
+                console.log(err);
+             } 
+            finally { setIsLoading(false); }
         };
 
         fetchProperties();
     }, [searchParams]);
-    
+
     // Funzione per applicare i filtri sui dati già caricati
     const handleApplyFilters = () => {
         let filtered = [...originalProperties]; // Si parte sempre dai dati originali!
 
-        // Filtro per tipo (Affitto/Vendita)
+       // 1. Filtro Tipo di Transazione
         if (filters.transactionType && filters.transactionType !== 'any') {
-            filtered = filtered.filter(p => p.transactionType === filters.transactionType);
+            filtered = filtered.filter(p => p.saleType === filters.transactionType);
         }
+
 
         // Filtro per prezzo
         const minPrice = parseFloat(filters.minPrice);
@@ -110,8 +103,8 @@ const PropertiesPage = () => {
         }
 
         // Filtro per numero di stanze (es. 'beds' o 'numberOfRooms')
-        if (filters.rooms) {
-            filtered = filtered.filter(p => p.beds === parseInt(filters.rooms, 10));
+        if (filters.rooms && filters.rooms !== "") {
+        filtered = filtered.filter(p => p.numberOfRooms === parseInt(filters.rooms, 10));
         }
 
         // Filtro per classe energetica
@@ -120,11 +113,21 @@ const PropertiesPage = () => {
         }
 
         // Filtro per servizi
-        if (selectedServices.length > 0) {
-            filtered = filtered.filter(property => 
-                selectedServices.every(serviceId => property.services.includes(serviceId))
+       if (selectedServices.length > 0) {
+        filtered = filtered.filter(property => {
+            // Controlla che la proprietà `services` esista e sia un array
+            if (!property.services || !Array.isArray(property.services)) {
+                return false;
+            }
+            
+            // Per ogni servizio selezionato nel filtro (es. 'balcony')...
+            return selectedServices.every(serviceId => 
+                // ...controlla se esiste almeno UN oggetto nell'array dell'immobile...
+                property.services.some(serviceObject => serviceObject.serviceName === serviceId)
+                // ...il cui `serviceName` corrisponda.
             );
-        }
+        });
+    }
 
         setDisplayedProperties(filtered); // Aggiorna la vista con i risultati filtrati
         setFilterOpen(false); // Chiude il dropdown
