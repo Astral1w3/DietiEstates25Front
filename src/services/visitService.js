@@ -30,3 +30,27 @@ export const bookVisit = async (visitData) => {
         throw error;
     }
 };
+
+/**
+ * Recupera tutte le prenotazioni per l'utente loggato (agente/manager/admin).
+ * Chiama l'endpoint protetto /visits/agent-bookings.
+ * 
+ * @returns {Promise<Array>} Una promessa che si risolve con un array di oggetti BookingDetailsDTO.
+ */
+export const getMyBookings = async () => {
+    try {
+        // --- MODIFICA CHIAVE ---
+        // Sostituiamo l'URL placeholder con quello reale e corretto
+        // che abbiamo definito nel VisitController.
+        const response = await api.get('/visits/agent-bookings'); 
+        
+        return response.data;
+    } catch (error){
+        // La gestione dell'errore è già corretta.
+        // Se un utente non autorizzato (es. un 'USER') prova a chiamare questo endpoint,
+        // l'interceptor di Axios riceverà un errore 403 Forbidden dal backend,
+        // e questo 'catch' lo intercetterà e lo rilancerà al componente.
+        console.error("Errore nel recupero delle prenotazioni dell'agente:", error.response || error);
+        throw error; // Rilancia l'errore per gestirlo nel componente
+    }
+};

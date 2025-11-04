@@ -9,10 +9,34 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [user, setUser] = useState(null);
 
-  // L'useEffect rimane perfetto com'è
-  useEffect(() => {
-    // ...
-  }, []);
+  // --- ECCO LA MODIFICA FONDAMENTALE ---
+    useEffect(() => {
+      // Questo effetto viene eseguito una sola volta all'avvio dell'app.
+      // Lo stato 'token' è già stato inizializzato leggendo da localStorage.
+      if (token) {
+        try {
+          // Se esiste un token, lo decodifichiamo per ottenere i dati dell'utente.
+          const decodedUser = jwtDecode(token);
+
+          // Aggiungiamo un controllo sulla scadenza del token per sicurezza
+          if (decodedUser.exp * 1000 < Date.now()) {
+              console.log("Token scaduto, logout in corso.");
+              logout();
+          } else {
+              // Se il token è valido, ripristiniamo l'oggetto 'user' nello stato.
+              setUser(decodedUser);
+          }
+
+        } catch (error) {
+          // Se il token è malformato o invalido, jwtDecode lancerà un errore.
+          console.error("Token non valido trovato in memoria, logout in corso.", error);
+          // Puliamo lo stato per sicurezza.
+          logout();
+        }
+      }
+    // L'array vuoto [] assicura che questo codice venga eseguito SOLO UNA VOLTA,
+    // quando l'applicazione si carica.
+    }, []);
 
   const login = async (email, password) => {
     try {

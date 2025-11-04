@@ -1,32 +1,61 @@
-import React, { useState, useMemo} from 'react';
+import React, { useState, useMemo, useEffect } from 'react'; // Aggiungi useEffect
 import { Link } from 'react-router-dom'; 
-import 'jspdf-autotable';
-import { FaCalendarAlt, FaCheckCircle, FaTimesCircle, FaClock} from 'react-icons/fa';
+import { FaCalendarAlt } from 'react-icons/fa';
+
+// 1. IMPORTA IL NUOVO SERVIZIO
+import { getMyBookings } from '../../services/visitService'; // Adatta il percorso se necessario
 
 import StatCard from '../StatCard/StatCard';
 import './BookingsView.css';
 
-const mockBookings = [
-    { id_booking: 1, id_property: 101, propertyAddress: '123 Main St', email: 'mario.rossi@example.com', clientName: 'Mario Rossi', visit_date: '2023-10-28T10:00:00', status: 'Confirmed' },
-    { id_booking: 2, id_property: 102, propertyAddress: '456 Oak Ave', email: 'luigi.verdi@example.com', clientName: 'Luigi Verdi', visit_date: '2023-10-29T14:30:00', status: 'Completed' },
-    { id_booking: 3, id_property: 103, propertyAddress: '789 Pine Ln', email: 'anna.bianchi@example.com', clientName: 'Anna Bianchi', visit_date: '2023-11-02T11:00:00', status: 'Pending' },
-    { id_booking: 4, id_property: 104, propertyAddress: '101 Maple Dr', email: 'laura.neri@example.com', clientName: 'Laura Neri', visit_date: '2023-11-05T16:00:00', status: 'Cancelled' },
-    { id_booking: 5, id_property: 101, propertyAddress: '123 Main St', email: 'paolo.gialli@example.com', clientName: 'Paolo Gialli', visit_date: '2023-11-10T09:30:00', status: 'Confirmed' },
-];
-
 const BookingsView = () => {
+    // 3. AGGIUNGI STATI PER DATI, CARICAMENTO ED ERRORI
+    const [bookings, setBookings] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
+    
     const [filter, setFilter] = useState('All');
 
+    // 4. USA useEffect PER CARICARE I DATI DAL BACKEND
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+                setIsLoading(true);
+                const data = await getMyBookings();
+                setBookings(data);
+                setError(null);
+            } catch (err) {
+                setError("Failed to load bookings. Please try again later.");
+                console.error(err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchBookings();
+    }, []); // L'array vuoto assicura che venga eseguito solo una volta
+
+    // 5. MODIFICA I CALCOLI PER USARE I DATI REALI
     const filteredBookings = useMemo(() => {
         if (filter === 'All') {
-            return mockBookings;
+            return bookings;
         }
-        return mockBookings.filter(b => b.status === filter);
-    }, [filter]);
+        // Assicurati che 'b.status' corrisponda al nome del campo restituito dal backend
+        return bookings.filter(b => b.status === filter); 
+    }, [filter, bookings]); // Aggiungi 'bookings' alle dipendenze
 
-    const totalBookings = mockBookings.length;
-    const confirmedCount = mockBookings.filter(b => b.status === 'Confirmed').length;
-    const pendingCount = mockBookings.filter(b => b.status === 'Pending').length;
+    const totalBookings = bookings.length;
+    // const confirmedCount = bookings.filter(b => b.status === 'Confirmed').length;
+    // const pendingCount = bookings.filter(b => b.status === 'Pending').length;
+
+    // 6. GESTISCI GLI STATI DI CARICAMENTO ED ERRORE NEL RENDER
+    if (isLoading) {
+        return <div className="dashboard-view"><h2>Loading bookings...</h2></div>;
+    }
+
+    if (error) {
+        return <div className="dashboard-view"><h2 className="error-message">{error}</h2></div>;
+    }
 
     return (
         <div className="dashboard-view">
@@ -35,63 +64,45 @@ const BookingsView = () => {
 
             <div className="stats-grid">
                 <StatCard icon={<FaCalendarAlt />} title="Total Bookings" value={totalBookings} />
-                <StatCard icon={<FaCheckCircle />} title="Confirmed" value={confirmedCount} change="+2 this week" />
-                <StatCard icon={<FaClock />} title="Pending Approval" value={pendingCount} />
-                <StatCard icon={<FaTimesCircle />} title="Cancelled" value={mockBookings.filter(b => b.status === 'Cancelled').length} />
             </div>
 
             <div className="dashboard-section">
                 <div className="section-header">
                     <h3>All Bookings</h3>
-                    <div className="filter-buttons">
-                        <button onClick={() => setFilter('All')} className={filter === 'All' ? 'active' : ''}>All</button>
-                        <button onClick={() => setFilter('Confirmed')} className={filter === 'Confirmed' ? 'active' : ''}>Confirmed</button>
-                        <button onClick={() => setFilter('Pending')} className={filter === 'Pending' ? 'active' : ''}>Pending</button>
-                        <button onClick={() => setFilter('Completed')} className={filter === 'Completed' ? 'active' : ''}>Completed</button>
-                    </div>
+                    {/* Qui potresti aggiungere i bottoni per il filtro */}
                 </div>
 
                 <div className="table-container">
-                    <table className="data-table">
-                        <thead>
-                            <tr>
-                                <th>Property</th>
-                                <th>Client</th>
-                                <th>Visit Date & Time</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredBookings.map(booking => (
-                                <tr key={booking.id_booking}>
-                                    <td>
-                                        <Link to={`/properties/${booking.id_property}`} className="property-link">
-                                            {booking.propertyAddress}
-                                        </Link>
-                                    </td>
-                                    <td className="client-info">
-                                        <div>{booking.clientName}</div>
-                                        <small>{booking.email}</small>
-                                    </td>
-                                    <td>{new Date(booking.visit_date).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}</td>
-                                    <td>
-                                        <span className={`status-badge status-${booking.status.toLowerCase()}`}>
-                                            {booking.status}
-                                        </span>
-                                    </td>
-                                    <td className="actions-cell">
-                                        {booking.status === 'Pending' && (
-                                            <>
-                                                <button className="btn-action confirm">Confirm</button>
-                                                <button className="btn-action reject">Cancel</button>
-                                            </>
-                                        )}
-                                    </td>
+                    {filteredBookings.length > 0 ? (
+                        <table className="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Property</th>
+                                    <th>Client</th>
+                                    <th>Visit Date & Time</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {filteredBookings.map(booking => (
+                                    // 7. ASSICURATI CHE I NOMI DEI CAMPI CORRISPONDANO ALL'API
+                                    <tr key={booking.id_booking}> 
+                                        <td>
+                                            <Link to={`/property/${booking.id_property}`} className="property-link">
+                                                {booking.propertyAddress}
+                                            </Link>
+                                        </td>
+                                        <td className="client-info">
+                                            <div>{booking.clientName}</div>
+                                            <small>{booking.email}</small>
+                                        </td>
+                                        <td>{new Date(booking.visit_date).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p>No bookings found for the selected filter.</p>
+                    )}
                 </div>
             </div>
         </div>

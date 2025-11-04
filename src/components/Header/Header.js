@@ -26,9 +26,8 @@ const Header = () => {
                 <div className="nav-left">
                     <Link to="/" className="logo">DietiEstates25</Link>
                     <nav className="main-nav">
-                        {/*filtro query type */}
-                        <Link to="/properties?type=buy">Buy</Link>
-                        <Link to="/properties?type=rent">Rent</Link>
+                        <Link to="/properties?location=Napoli&type=Sale">Sale</Link>
+                        <Link to="/properties?location=Napoli&type=Rent">Rent</Link>
                     </nav>
                 </div>
                 <div className="nav-right">

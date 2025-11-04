@@ -274,7 +274,7 @@ input[type="number"] {
 /* --- Layout generico della pagina del dashboard --- */
 .dashboard-view {
     padding: var(--spacing-lg) var(--spacing-xl);
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     min-height: 100vh;
 }
 

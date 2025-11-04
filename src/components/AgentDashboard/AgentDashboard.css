@@ -22,4 +22,105 @@
 
 .btn-export:hover {
     background-color: #e9ecef;
+}/* --- NUOVI STILI PER LA GRIGLIA DI CARD --- */
+
+.property-overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.property-overview-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.property-overview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.property-overview-card .card-image-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+}
+
+.property-overview-card .card-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.property-overview-card .card-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+/* Assicurati di avere stili per status-badge, altrimenti aggiungili */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: capitalize;
+}
+.status-badge.status-available, .status-badge.status-sale { background-color: #28a745; }
+.status-badge.status-occupied, .status-badge.status-rent { background-color: #007bff; }
+.status-badge.status-pending { background-color: #ffc107; color: #333; }
+.status-badge.status-accepted { background-color: #17a2b8; }
+.status-badge.status-declined, .status-badge.status-rejected { background-color: #dc3545; }
+
+
+.property-overview-card .card-content {
+    padding: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.property-overview-card .card-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.property-overview-card .card-content .price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-primary, #e24747);
+    margin: 0 0 16px 0;
+}
+
+.property-overview-card .card-stats {
+    display: flex;
+    justify-content: space-around;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.property-overview-card .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    color: #555;
+    font-weight: 500;
+}
+
+.property-overview-card .stat-item svg {
+    color: #888;
 }

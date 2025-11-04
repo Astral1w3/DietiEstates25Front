@@ -47,36 +47,53 @@ const PropertiesPage = () => {
     const [filters, setFilters] = useState(initialFilters);
     const [selectedServices, setSelectedServices] = useState([]);
     const [searchParams] = useSearchParams();
-
     // --- useEffect REFACTORED ---
     // Ora si occupa solo di orchestrare la chiamata e aggiornare lo stato.
-    useEffect(() => {
+   useEffect(() => {
         const locationQuery = searchParams.get('location');
-        const typeQuery = searchParams.get('type');
+        const typeQuery = searchParams.get('type'); // Questo sarà "Sale" o "Rent"
 
         const fetchProperties = async () => {
-            if (!locationQuery) { /* ... */ return; }
+            if (!locationQuery) {
+                // Se non c'è una location, non facciamo nulla
+                setOriginalProperties([]);
+                setDisplayedProperties([]);
+                return;
+            }
+            
             setIsLoading(true);
             setError(null);
+            
             try {
+                // 1. Chiamiamo l'API solo con la location. Il filtro per tipo lo facciamo dopo.
                 const fetchedData = await searchPropertiesByLocation(locationQuery);
-                let initialData = fetchedData;
+
+                let initialData = fetchedData; // Partiamo con tutti i dati
                 const newFilters = { ...initialFilters };
 
-                if (typeQuery === 'buy' || typeQuery === 'rent') {
-                    // --- CORREZIONE QUI 1/2 ---
-                    // Usa 'saleType' che è il campo corretto nel JSON
-                    initialData = fetchedData.filter(p => p.saleType === typeQuery);
+                // --- INIZIO LOGICA CORRETTA ---
+                // 2. Controlliamo se il parametro 'type' esiste nella URL
+                if (typeQuery && (typeQuery.toLowerCase() === 'sale' || typeQuery.toLowerCase() === 'rent')) {
+                    
+                    // 3. Applichiamo il filtro sui dati appena scaricati
+                    // Usiamo toLowerCase() per essere sicuri, anche se non strettamente necessario qui
+                    initialData = fetchedData.filter(p => p.saleType.toLowerCase() === typeQuery.toLowerCase());
+                    
+                    // 4. Pre-impostiamo il valore corretto nel dropdown dei filtri
                     newFilters.transactionType = typeQuery;
                 }
+                // --- FINE LOGICA CORRETTA ---
 
-                setOriginalProperties(fetchedData);
-                setDisplayedProperties(initialData);
-                setFilters(newFilters);
+                setOriginalProperties(fetchedData); // Salviamo sempre i dati originali non filtrati
+                setDisplayedProperties(initialData); // Mostriamo i dati filtrati (o tutti se non c'è type)
+                setFilters(newFilters); // Aggiorniamo lo stato dei filtri
+
             } catch (err) {
-                console.log(err);
-             } 
-            finally { setIsLoading(false); }
+                console.error("Errore nel recupero delle proprietà:", err);
+                setError("Impossibile caricare le proprietà. Riprova più tardi.");
+            } finally { 
+                setIsLoading(false); 
+            }
         };
 
         fetchProperties();
