@@ -1,35 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation, useSearchParams} from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-// --- IMPORTA LE FUNZIONI DAI FILE DI SERVIZIO ---
-import { bookVisit } from '../../services/visitService';
-import { createOffer } from '../../services/offerService';
-import { getPropertyById, trackPropertyView } from '../../services/propertyService'; 
+// --- Servizi ---
+import { getPropertyById, trackPropertyView } from '../../services/propertyService';
+
 // --- Componenti UI ---
 import PropertyGallery from '../../components/PropertyGallery/PropertyGallery';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';
-import DatePicker from 'react-datepicker';
+import BookingVisitModal from '../../components/BookingVisitModal/BookingVisitModal';
+import MakeOfferModal from '../../components/MakeOfferModal/MakeOfferModal'; // <-- NUOVO IMPORT
 
 // --- CSS ---
-import 'react-datepicker/dist/react-datepicker.css';
 import './PropertyDetailPage.css';
 
 // --- Componente Principale ---
 const PropertyDetailPage = () => {
-    // STATO: Dati dell'immobile, caricamento e errori
     const [property, setProperty] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // STATO per i modali (finestre popup)
+    // STATO PER I MODALI (ORA MOLTO PIÙ SEMPLICE)
     const [isTourModalOpen, setIsTourModalOpen] = useState(false);
-    const [selectedDate, setSelectedDate] = useState(null);
-    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
-    const [offerPrice, setOfferPrice] = useState('');
-    const [offerError, setOfferError] = useState('');
+    const [isOfferModalOpen, setIsOfferModalOpen] = useState(false); // <-- Un solo stato per il modale
 
-    // HOOKS: Per ottenere l'ID dalla URL e controllare l'autenticazione
     const { propertyId } = useParams();
     const { isAuthenticated } = useAuth();
     const location = useLocation();
@@ -54,7 +48,7 @@ const PropertyDetailPage = () => {
                 setLoading(false);
             }
         }
-    };
+    }; 
         fetchPropertyAndTrackView();
     }, [propertyId]); // Esegui l'effetto quando propertyId cambia
 
@@ -83,50 +77,6 @@ const PropertyDetailPage = () => {
         fetchProperty();
     }, [propertyId]);
 
-    // --- GESTORI DI EVENTI PER LE AZIONI ---
-    const handleTourSubmit = async () => {
-        if (!selectedDate) {
-            alert("Per favore, seleziona una data.");
-            return;
-        }
-        try {
-            await bookVisit({
-                propertyId: property.idProperty,
-                visitDate: selectedDate.toISOString(),
-            });
-            alert(`Visita richiesta con successo per il giorno: ${selectedDate.toLocaleDateString()}`);
-            setIsTourModalOpen(false);
-            setSelectedDate(null);
-        } catch (error) {
-            alert("Si è verificato un errore. Riprova più tardi.");
-        }
-    };
-
-    const handleOfferSubmit = async () => {
-        const priceValue = parseFloat(offerPrice);
-
-        if (!priceValue || priceValue <= 0) {
-            setOfferError('Inserisci un importo valido.');
-            return;
-        }
-        if (priceValue >= property.price) {
-            setOfferError(`L'offerta deve essere inferiore al prezzo attuale.`);
-            return;
-        }
-
-        try {
-            await createOffer({
-                propertyId: property.idProperty,
-                offerPrice: priceValue,
-            });
-            setOfferError('');
-            alert(`Offerta di ${priceValue.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })} inviata con successo!`);
-            setIsOfferModalOpen(false);
-            setOfferPrice('');
-        } catch (error) {
-            setOfferError("Errore del server. Riprova più tardi.");
-        }
-    };
 
     // --- LOGICA DI RENDER ---
     if (loading) return <div className="property-detail-container"><h2>Caricamento...</h2></div>;
@@ -172,42 +122,22 @@ const PropertyDetailPage = () => {
                     </div>
                 </div>
 
-                {/* --- Modali per Visita e Offerta (Logica invariata ma ora funzionali) --- */}
-                {isAuthenticated && isTourModalOpen && (
-                    <div className="modal-overlay" onClick={() => setIsTourModalOpen(false)}>
-                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                            <h2>Seleziona una data per la visita</h2>
-                            <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} inline minDate={new Date()} />
-                            <div className="modal-actions">
-                                <button className="btn btn-secondary" onClick={() => setIsTourModalOpen(false)}>Annulla</button>
-                                <button className="btn btn-primary" onClick={handleTourSubmit}>Invia Richiesta</button>
-                            </div>
-                        </div>
-                    </div>
+                {isAuthenticated && (
+                    <>
+                        <BookingVisitModal
+                            isOpen={isTourModalOpen}
+                            onClose={() => setIsTourModalOpen(false)}
+                            propertyId={property.idProperty}
+                        />
+                        <MakeOfferModal
+                            isOpen={isOfferModalOpen}
+                            onClose={() => setIsOfferModalOpen(false)}
+                            propertyId={property.idProperty}
+                            currentPrice={property.price}
+                        />
+                    </>
                 )}
-                 {isAuthenticated && isOfferModalOpen && (
-                     <div className="modal-overlay" onClick={() => setIsOfferModalOpen(false)}>
-                        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                            <h2>Fai la tua offerta</h2>
-                            <p>Prezzo attuale: {property.price.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}</p>
-                            <div className="offer-input-group">
-                                <label htmlFor="offerPrice">La tua offerta (€)</label>
-                                <input
-                                    type="number"
-                                    id="offerPrice"
-                                    value={offerPrice}
-                                    onChange={(e) => setOfferPrice(e.target.value)}
-                                    placeholder="Es. 450000"
-                                />
-                            </div>
-                            {offerError && <p className="modal-error">{offerError}</p>}
-                            <div className="modal-actions">
-                                <button className="btn btn-secondary" onClick={() => setIsOfferModalOpen(false)}>Annulla</button>
-                                <button className="btn btn-primary" onClick={handleOfferSubmit}>Invia Offerta</button>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                 
 
                 {/* --- Sezioni informative dinamiche --- */}
                 <section className="info-section">

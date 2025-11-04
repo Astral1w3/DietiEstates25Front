@@ -1,84 +1,128 @@
-import React, { useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
+// 1. IMPORT CORRETTO: Usa la tua istanza axios pre-configurata
+//    Assicurati che il percorso sia corretto rispetto alla posizione di questo file.
+import api from '../../services/api'; 
+
 // Import per i grafici
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 // Import per l'esportazione
 import { CSVLink } from 'react-csv';
 import jsPDF from 'jspdf';
-import { autoTable } from 'jspdf-autotable';
+import 'jspdf-autotable';
 // Import per le icone
 import { FaEye, FaHandshake, FaFileSignature, FaBuilding } from 'react-icons/fa';
 
-import StatCard from '../StatCard/StatCard'; // Il nostro componente riutilizzabile
-import './AgentDashboard.css'; // Creeremo questo file
+import StatCard from '../StatCard/StatCard';
+import './AgentDashboard.css';
 
 // Registra i componenti necessari per Chart.js
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-// --- DATI DI ESEMPIO ---
-const mockData = {
-    totalViews: 12543,
-    bookedVisits: 187,
-    offersReceived: 42,
-    properties: [
-        { id: 'P001', address: '123 Main St', views: 4500, visits: 60, offers: 15, status: 'Active' },
-        { id: 'P002', address: '456 Oak Ave', views: 3200, visits: 45, offers: 10, status: 'Active' },
-        { id: 'P003', address: '789 Pine Ln', views: 1800, visits: 30, offers: 8, status: 'Sold' },
-        { id: 'P004', address: '101 Maple Dr', views: 3043, visits: 52, offers: 9, status: 'Active' },
-    ],
-    salesOverTime: {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-        data: [2, 3, 5, 4, 7, 6],
-    }
-};
-
 const AgentDashboard = () => {
-    // ---- LOGICA PER L'ESPORTAZIONE ----
+    // ---- STATO PER DATI REALI, CARICAMENTO ED ERRORI ----
+    const [dashboardData, setDashboardData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // ---- FETCH DEI DATI DAL BACKEND ----
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                // 2. CHIAMATA SEMPLIFICATA:
+                // - L'URL base ('http://localhost:8080/api') è già in 'api'.
+                // - L'header 'Authorization' con il token viene aggiunto dall'interceptor.
+                //   Non c'è più bisogno di leggerlo manualmente da localStorage qui.
+                const response = await api.get('/dashboard/agent');
+                setDashboardData(response.data);
+            } catch (err) {
+                setError('Failed to fetch dashboard data. Please try again later.');
+                console.error("Error fetching dashboard data:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []); // L'array vuoto esegue l'effetto solo al montaggio del componente
+
+    // ---- LOGICA PER L'ESPORTAZIONE (invariata, ma ora più robusta) ----
     const handleExportPDF = useCallback(() => {
+        if (!dashboardData || !dashboardData.properties) return;
         const doc = new jsPDF();
         doc.text("Agent Property Report", 14, 20);
-        autoTable(doc, {
+        doc.autoTable({
             startY: 30,
-            head: [['ID', 'Address', 'Views', 'Visits', 'Offers', 'Status']],
-            body: mockData.properties.map(p => [p.id, p.address, p.views, p.visits, p.offers, p.status]),
+            head: [['ID', 'Address', 'Views', 'Visits', 'Sale Type', 'Status']],
+            body: dashboardData.properties.map(p => [
+                p.idProperty,
+                `${p.address.street}, ${p.address.city}`,
+                p.propertyStats?.numberOfViews || 0,
+                p.propertyStats?.numberOfScheduledVisits || 0,
+                p.saleType || 'N/A', // Usiamo saleType dal DTO
+                'Active' // Placeholder
+            ]),
         });
         doc.save('property_report.pdf');
-    }, []);
+    }, [dashboardData]);
 
     const csvHeaders = [
-        { label: "Property ID", key: "id" },
-        { label: "Address", key: "address" },
-        { label: "Views", key: "views" },
-        { label: "Booked Visits", key: "visits" },
-        { label: "Offers Received", key: "offers" },
-        { label: "Status", key: "status" },
+        { label: "Property ID", key: "idProperty" },
+        { label: "Address", key: "address.street" },
+        { label: "City", key: "address.city"},
+        { label: "Views", key: "propertyStats.numberOfViews" },
+        { label: "Booked Visits", key: "propertyStats.numberOfScheduledVisits" },
+        { label: "Sale Type", key: "saleType"},
     ];
 
-    // ---- CONFIGURAZIONE DEL GRAFICO ----
-    const chartOptions = { responsive: true, plugins: { legend: { position: 'top' }, title: { display: true, text: 'Properties Sold/Rented Per Month' } } };
+    // ---- GESTIONE DEGLI STATI DI CARICAMENTO ED ERRORE (invariato) ----
+    if (loading) {
+        return <div className="dashboard-loading"><h2>Loading Dashboard...</h2></div>;
+    }
+
+    if (error) {
+        return <div className="dashboard-error"><h2>{error}</h2></div>;
+    }
+
+      // --- NUOVO CONTROLLO DI SICUREZZA ---
+    // Se il caricamento è terminato e non ci sono errori, ma i dati non sono ancora arrivati
+    // o sono nulli, non tentare di renderizzare il resto del componente.
+    if (!dashboardData) {
+        return <div className="dashboard-nodata"><h2>No data available.</h2></div>;
+    }
+
+    // ---- Se arriviamo qui, siamo sicuri che 'dashboardData' è un oggetto valido ----
+
+    const chartOptions = { responsive: true, plugins: { legend: { position: 'top' }, title: { display: true, text: 'Performance Over Last 6 Months' } } };
     const chartData = {
-        labels: mockData.salesOverTime.labels,
+        // Aggiungiamo un controllo anche qui per massima sicurezza
+        labels: dashboardData.salesOverTime ? Object.keys(dashboardData.salesOverTime) : [],
         datasets: [{
-            label: 'Properties',
-            data: mockData.salesOverTime.data,
+            label: 'Properties Sold/Rented',
+            data: dashboardData.salesOverTime ? Object.values(dashboardData.salesOverTime) : [],
             borderColor: 'rgb(226, 71, 71)',
             backgroundColor: 'rgba(226, 71, 71, 0.5)',
         }],
     };
 
-    return (
+    console.log(dashboardData)
+   return (
         <div className="agent-dashboard">
             <h2>Agent Dashboard</h2>
             <hr/>
             <div className="dashboard-grid stats-grid">
-                <StatCard icon={<FaEye />} title="Total Property Views" value={mockData.totalViews.toLocaleString()} change="+5% this month" />
-                <StatCard icon={<FaHandshake />} title="Booked Visits" value={mockData.bookedVisits} change="+12 bookings" />
-                <StatCard icon={<FaFileSignature />} title="Offers Received" value={mockData.offersReceived} change="+3 new offers" />
-                <StatCard icon={<FaBuilding />} title="Active Listings" value={mockData.properties.filter(p => p.status === 'Active').length} />
+                {/* --- CORREZIONE APPLICATA QUI --- */}
+                {/* Usa (valore ?? 0) per fornire un fallback sicuro prima di chiamare toLocaleString() */}
+                <StatCard icon={<FaEye />} title="Total Property Views" value={(dashboardData.totalViews ?? 0).toLocaleString()} />
+                <StatCard icon={<FaHandshake />} title="Booked Visits" value={(dashboardData.bookedVisits ?? 0).toLocaleString()} />
+                <StatCard icon={<FaFileSignature />} title="Offers Received" value={(dashboardData.offersReceived ?? 0).toLocaleString()} />
+                <StatCard icon={<FaBuilding />} title="Active Listings" value={(dashboardData.activeListings ?? 0).toLocaleString()} />
             </div>
+            
             <div className="card chart-container">
                 <h3>Performance Over Time</h3>
-                <Line options={chartOptions} data={chartData} />
+                {/* Aggiungi un controllo per evitare di renderizzare il grafico se mancano i dati */}
+                {dashboardData.salesOverTime && <Line options={chartOptions} data={chartData} />}
             </div>
 
             <div className="dashboard-section">
@@ -86,9 +130,11 @@ const AgentDashboard = () => {
                     <h3>Properties Overview</h3>
                     <div className="export-actions">
                         <button onClick={handleExportPDF} className="btn-export">Export PDF</button>
-                        <CSVLink data={mockData.properties} headers={csvHeaders} filename={"property_report.csv"} className="btn-export">
-                            Export CSV
-                        </CSVLink>
+                        {dashboardData.properties &&
+                            <CSVLink data={dashboardData.properties} headers={csvHeaders} filename={"property_report.csv"} className="btn-export">
+                                Export CSV
+                            </CSVLink>
+                        }
                     </div>
                 </div>
                 <div className="table-container">
@@ -98,18 +144,18 @@ const AgentDashboard = () => {
                                 <th>Address</th>
                                 <th>Views</th>
                                 <th>Visits</th>
-                                <th>Offers</th>
+                                <th>Sale Type</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {mockData.properties.map(prop => (
-                                <tr key={prop.id}>
-                                    <td>{prop.address}</td>
-                                    <td>{prop.views.toLocaleString()}</td>
-                                    <td>{prop.visits}</td>
-                                    <td>{prop.offers}</td>
-                                    <td><span className={`status ${prop.status.toLowerCase()}`}>{prop.status}</span></td>
+                            {dashboardData && dashboardData.properties.map(prop => (
+                                <tr key={prop.idProperty}>
+                                    <td>{`${prop.address.street}, ${prop.address.city}, ${prop.address.postalCode}`}</td>
+                                    <td>{(prop.propertyStats?.numberOfViews || 0).toLocaleString()}</td>
+                                    <td>{prop.propertyStats?.numberOfScheduledVisits || 0}</td>
+                                    <td><span className={`status ${prop.saleType?.toLowerCase()}`}>{prop.saleType}</span></td>
+                                    <td><span className={`status active`}>Active</span></td>
                                 </tr>
                             ))}
                         </tbody>
