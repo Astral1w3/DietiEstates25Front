@@ -64,17 +64,12 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
                 <p className="card-address">{displayAddress}</p>
                 <p className="card-city">{displayLocation} - {displayZipCode}</p>
 
-                {/* --- NUOVO BLOCCO JSX: Renderizza i tag di prossimità --- */}
-                {/* Questo contenitore appare solo se abbiamo trovato almeno un servizio di prossimità. */}
-                {nearbyAmenities.length > 0 && (
-                    <div className="card-amenities">
-                        {nearbyAmenities.map(amenity => (
-                            <span key={amenity.label} className="amenity-tag">
+                {nearbyAmenities.map((amenity, index) => (
+                            // SOLUZIONE: Usiamo l'etichetta + l'indice per garantire una key unica.
+                            <span key={`${amenity.label}-${index}`} className="amenity-tag">
                                 {amenity.emoji} {amenity.label}
                             </span>
                         ))}
-                    </div>
-                )}
 
                 <button className="card-cta-btn">Maggiori Dettagli</button>
             </div>

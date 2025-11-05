@@ -15,21 +15,47 @@ export const getPropertyById = async (propertyId) => {
     }
 };
 
+// --- INIZIO BLOCCO MODIFICATO ---
+
 /**
- * Cerca le proprietà in base a una località.
+ * Cerca le proprietà in base a una località, con supporto per la paginazione.
  * @param {string} location - La località da cercare.
- * @returns {Promise<Array>}
+ * @param {number} page - Il numero della pagina da recuperare (parte da 0).
+ * @param {number} size - Il numero di elementi per pagina.
+ * @returns {Promise<object>} - Restituisce l'intero oggetto Page dal backend.
  */
-export const searchPropertiesByLocation = async (location) => {
-    if (!location) return [];
+export const searchPropertiesByLocation = async (location, page = 0, size = 10) => {
+    if (!location) {
+        // Se non c'è una location, restituiamo una struttura di pagina vuota
+        // per evitare errori nel componente che la riceve.
+        return {
+            content: [],
+            totalPages: 0,
+            totalElements: 0,
+            number: 0
+        };
+    }
     try {
-        const response = await api.get(`/properties/search?location=${location}`);
+        // Usiamo l'oggetto `params` di Axios per costruire l'URL in modo pulito e sicuro.
+        // Axios si occuperà di creare la stringa ?location=...&page=...&size=...
+        const response = await api.get('/properties/search', {
+            params: {
+                location: location,
+                page: page,
+                size: size
+                // Puoi aggiungere un ordinamento di default se vuoi, es:
+                // sort: 'price,asc'
+            }
+        });
+        
+        // Restituisce l'intero oggetto Page { content: [...], ... }
         return response.data;
     } catch (error) {
         console.error("Errore nel recupero delle proprietà:", error);
         throw error;
     }
 };
+
 
 /**
  * Crea una nuova proprietà, includendo il caricamento di immagini.

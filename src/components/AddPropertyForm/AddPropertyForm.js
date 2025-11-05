@@ -5,6 +5,7 @@ import '@geoapify/geocoder-autocomplete/styles/minimal.css';
 import './AddPropertyForm.css';
 
 import { createProperty } from '../../services/propertyService';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // <-- 1. IMPORTA IL MODALE
 
 const availableServices = [
     { id: 'concierge', label: 'Concierge', emoji: '🛎️' },
@@ -35,6 +36,7 @@ const AddPropertyForm = () => {
     const [isCheckingAmenities, setIsCheckingAmenities] = useState(false); // Stato per il caricamento dei servizi
     const [selectedPlace, setSelectedPlace] = useState(null);
     const fileInputRef = useRef(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // --- NUOVA FUNZIONE PER VERIFICARE I SERVIZI NELLE VICINANZE ---
     const checkNearbyAmenities = async (lat, lon) => {
@@ -137,23 +139,29 @@ const AddPropertyForm = () => {
             }));
         }
     };
-
-    const handleSubmit = async (e) => {
+const handleSubmit = (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
-        setIsLoading(true);
 
+        // Esegui i controlli di validazione prima di aprire il modale
         if (!selectedPlace) {
             setMessage({ text: 'Please select a valid address from the suggestions.', type: 'error' });
-            setIsLoading(false);
             return;
         }
-
         if (!formData.price || !formData.address || !formData.description || !formData.sqMeters || !formData.rooms) {
             setMessage({ text: 'Please fill in all required fields.', type: 'error' });
-            setIsLoading(false);
             return;
         }
+        
+        // Se i controlli passano, apri il modale per la conferma
+        setIsModalOpen(true);
+    };
+
+    // Questa nuova funzione contiene la logica di invio che prima era in handleSubmit
+    const handleConfirmSubmit = async () => {
+        // Chiudi subito il modale e attiva l'indicatore di caricamento
+        setIsModalOpen(false);
+        setIsLoading(true);
 
         const servicesPayload = Object.entries(services)
             .filter(([key, value]) => value === true)
@@ -167,13 +175,14 @@ const AddPropertyForm = () => {
             municipality: {
                 municipalityName: selectedPlace.city,
                 zipCode: selectedPlace.postcode,
+                latitude: selectedPlace.latitude,
+                longitude: selectedPlace.longitude,
                 province: {
-                    provinceName: selectedPlace.county || '',
-                    acronym: '',
-                    region: { regionName: selectedPlace.state }
+                    provinceName: selectedPlace.county
                 }
             }
         };
+
 
         const payload = {
             price: formData.price,
@@ -308,6 +317,15 @@ const AddPropertyForm = () => {
                         </button>
                     </div>
                 </form>
+
+                <ConfirmationModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)} // Chiude semplicemente il modale
+                    onConfirm={handleConfirmSubmit}       // Esegue l'invio
+                    title="Confirm Submission"
+                >
+                    <p>Are you sure you want to add this property to the listings?</p>
+                </ConfirmationModal>
             </div>
         </GeoapifyContext>
     );

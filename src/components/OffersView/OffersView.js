@@ -2,9 +2,14 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import 'jspdf-autotable';
 import { FaTags, FaRegClock, FaRegCheckCircle, FaRegTimesCircle } from 'react-icons/fa';
+
+// Componenti
 import StatCard from '../StatCard/StatCard';
+import SuccessView from '../SuccessView/SuccessView';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // Importa il nuovo modale
+
+// Servizi e CSS
 import { getMyOffers, acceptOffer, declineOffer } from '../../services/offerService';
-import SuccessView from '../SuccessView/SuccessView'; // <-- 1. IMPORTA IL COMPONENTE SUCCESSVIEW
 import './OffersView.css';
 
 const OffersView = () => {
@@ -12,10 +17,10 @@ const OffersView = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [filter, setFilter] = useState('All');
-
-    // --- 2. AGGIUNGI STATI PER LA SCHERMATA DI SUCCESSO ---
     const [isSuccess, setIsSuccess] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [actionToConfirm, setActionToConfirm] = useState(null);
 
     const fetchOffers = async () => {
         try {
@@ -42,29 +47,40 @@ const OffersView = () => {
         return offers.filter(o => o.state === filter);
     }, [filter, offers]);
 
-    // --- 3. MODIFICA LA FUNZIONE HANDLER ---
-    const handleUpdateOfferStatus = async (offerId, action) => {
-        if (!window.confirm(`Are you sure you want to ${action} this offer?`)) {
-            return;
-        }
+    const handleUpdateOffer = (offerId, action) => {
+        setActionToConfirm({ offerId, action });
+        setIsModalOpen(true);
+    };
 
+    const handleConfirmAction = async () => {
+        if (!actionToConfirm) return;
+
+        const { offerId, action } = actionToConfirm;
+        
+        // Chiudi subito il modale per dare un feedback visivo
+        setIsModalOpen(false);
+        
         try {
             const actionToPerform = action === 'accept' ? acceptOffer : declineOffer;
             await actionToPerform(offerId);
 
-            // Imposta il messaggio di successo e attiva la vista
             setSuccessMessage(`Offer has been successfully ${action === 'accept' ? 'accepted' : 'declined'}.`);
             setIsSuccess(true);
-
-            // Dopo 2.5 secondi, nascondi il messaggio e ricarica i dati
+        } catch (err) {
+            alert(`Error: ${err.response?.data?.message || 'Could not update the offer.'}`);
+        } finally {
+            setActionToConfirm(null);
+            
             setTimeout(() => {
                 setIsSuccess(false);
                 fetchOffers();
             }, 2500);
-
-        } catch (err) {
-            alert(`Error: ${err.response?.data?.message || 'Could not update the offer.'}`);
         }
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+        setActionToConfirm(null);
     };
 
     const totalOffers = offers.length;
@@ -75,12 +91,11 @@ const OffersView = () => {
     if (isLoading) return <div className="dashboard-view"><h2>Loading offers...</h2></div>;
     if (error) return <div className="dashboard-view"><h2 className="error-message">{error}</h2></div>;
 
-    // --- 4. AGGIUNGI IL RENDER CONDIZIONALE PER LA SUCCESSVIEW ---
     if (isSuccess) {
         return (
-                <SuccessView title="Update Successful!">
-                    <p>{successMessage}</p>
-                </SuccessView>
+            <SuccessView title="Update Successful!">
+                <p>{successMessage}</p>
+            </SuccessView>
         );
     }
 
@@ -153,13 +168,13 @@ const OffersView = () => {
                                                 <>
                                                     <button 
                                                         className="btn-action confirm"
-                                                        onClick={() => handleUpdateOfferStatus(offer.id_offer, 'accept')}
+                                                        onClick={() => handleUpdateOffer(offer.id_offer, 'accept')}
                                                     >
                                                         Accept
                                                     </button>
                                                     <button 
                                                         className="btn-action reject"
-                                                        onClick={() => handleUpdateOfferStatus(offer.id_offer, 'decline')}
+                                                        onClick={() => handleUpdateOffer(offer.id_offer, 'decline')}
                                                     >
                                                         Decline
                                                     </button>
@@ -175,6 +190,17 @@ const OffersView = () => {
                     )}
                 </div>
             </div>
+
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmAction}
+                title="Confirm Action"
+            >
+                <p>
+                    Are you sure you want to <strong>{actionToConfirm?.action}</strong> this offer?
+                </p>
+            </ConfirmationModal>
         </div>
     );
 };

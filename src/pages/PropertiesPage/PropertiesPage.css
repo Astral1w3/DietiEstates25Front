@@ -69,3 +69,38 @@
     cursor: pointer;
     font-weight: 500;
 }
+
+/* In PropertiesPage.css */
+
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+.pagination-controls button {
+    padding: 8px 16px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.pagination-controls button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.pagination-controls button:disabled {
+    cursor: not-allowed;
+    color: #aaa;
+    border-color: #eee;
+}
+
+.pagination-controls span {
+    font-weight: 500;
+    color: #555;
+}

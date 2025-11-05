@@ -44,7 +44,7 @@ const SearchBar = () => {
                     // 'administrative' è un'alternativa se vuoi dare priorità anche a province e regioni.
                     type="city" 
                     lang="it" // Lingua dei risultati
-                    countryCodes={["it"]} // Limita la ricerca solo all'Italia
+                    filterByCountryCode={["it"]} // Limita la ricerca solo all'Italia
                     
                     // --- GESTIONE DEGLI EVENTI ---
                     placeSelect={handlePlaceSelect} // Attivato quando si clicca un suggerimento

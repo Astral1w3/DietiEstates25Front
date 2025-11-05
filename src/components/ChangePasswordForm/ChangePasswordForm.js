@@ -1,11 +1,8 @@
-// src/components/ChangePasswordForm/ChangePasswordForm.js
-
 import React, { useState, useEffect } from 'react';
 import './ChangePasswordForm.css';
 import { useAuth } from '../../context/AuthContext';
-
-// --- MODIFICA 1: Importa la tua istanza 'api' centralizzata ---
-import api from '../../services/api'; // Assicurati che il percorso sia corretto!
+import api from '../../services/api';
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // <-- 1. IMPORTA IL MODALE
 
 const ChangePasswordForm = () => {
     const { user } = useAuth();
@@ -19,22 +16,18 @@ const ChangePasswordForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
 
-    useEffect(() => {
-        if (!user) {
-            return;
-        }
+    // --- 2. AGGIUNGI STATO PER IL MODALE ---
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
+    useEffect(() => {
+        if (!user) return;
+        
         const checkPasswordStatus = async () => {
             setIsLoading(true);
             try {
-                // --- MODIFICA 2: Usa 'api.get'. Non serve più gestire il token manualmente. ---
-                // Il nostro interceptor in 'api.js' aggiungerà l'header 'Authorization' per noi.
                 const response = await api.get(`/user/${user.email}/has-password`);
-                
                 setIsPasswordSet(response.data.hasPassword);
-
             } catch (error) {
-                // Axios inserisce i dettagli dell'errore in 'error.response'
                 const errorMsg = error.response?.data || "Failed to verify password status.";
                 console.error("Error checking password status:", errorMsg);
                 setMessage({ text: errorMsg, type: 'error' });
@@ -42,7 +35,6 @@ const ChangePasswordForm = () => {
                 setIsLoading(false);
             }
         };
-
         checkPasswordStatus();
     }, [user]);
 
@@ -51,11 +43,13 @@ const ChangePasswordForm = () => {
         setPasswords(prevState => ({ ...prevState, [name]: value }));
     };
 
-    const handleSubmit = async (e) => {
+    // --- 3. MODIFICA LA GESTIONE DEL SUBMIT ---
+
+    // La vecchia funzione 'handleSubmit' ora fa solo validazione e apre il modale
+    const handleSubmit = (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
 
-        // La logica di validazione rimane la stessa...
         if ((isPasswordSet && !passwords.currentPassword) || !passwords.newPassword || !passwords.confirmPassword) {
             setMessage({ text: 'Please fill in all required fields.', type: 'error' });
             return;
@@ -68,7 +62,14 @@ const ChangePasswordForm = () => {
             setMessage({ text: 'New passwords do not match.', type: 'error' });
             return;
         }
+        
+        // Se la validazione passa, apri il modale
+        setIsModalOpen(true);
+    };
 
+    // La nuova funzione 'handleConfirmSubmit' contiene la logica della chiamata API
+    const handleConfirmSubmit = async () => {
+        setIsModalOpen(false);
         setIsSubmitting(true);
 
         try {
@@ -77,16 +78,13 @@ const ChangePasswordForm = () => {
                 currentPassword: passwords.currentPassword,
                 newPassword: passwords.newPassword,
             };
-
             if (!isPasswordSet) {
                 delete payload.currentPassword;
             }
 
-            // --- MODIFICA 3: Usa 'api.patch' per la chiamata di aggiornamento ---
-            // Anche qui, il token viene aggiunto automaticamente.
             const response = await api.patch('/user/change-password', payload);
             
-            const successText = response.data; // Il backend restituisce direttamente il testo di successo
+            const successText = response.data;
             setMessage({ text: successText || 'Password updated successfully!', type: 'success' });
             setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
             if (!isPasswordSet) {
@@ -101,14 +99,8 @@ const ChangePasswordForm = () => {
         }
     };
 
-    // La logica di rendering rimane invariata.
-    if (isLoading) {
-        return <div className="card-loading">Checking account status...</div>;
-    }
-
-    if (isPasswordSet === null && message.text) {
-         return <div className="card-error">{message.text}</div>
-    }
+    if (isLoading) return <div className="card-loading">Checking account status...</div>;
+    if (isPasswordSet === null && message.text) return <div className="card-error">{message.text}</div>;
     
     return (
         <div className="card">
@@ -140,6 +132,16 @@ const ChangePasswordForm = () => {
                     </button>
                 </div>
             </form>
+
+            {/* --- 4. AGGIUNGI IL COMPONENTE MODALE QUI --- */}
+            <ConfirmationModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                onConfirm={handleConfirmSubmit}
+                title="Confirm Password Change"
+            >
+                <p>Are you sure you want to update your password?</p>
+            </ConfirmationModal>
         </div>
     );
 };
