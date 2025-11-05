@@ -100,7 +100,7 @@ const AgentDashboard = () => {
                 <div className="property-overview-grid">
                     {dashboardData.properties && dashboardData.properties.length > 0 ? (
                         dashboardData.properties.map(prop => (
-                            <Link to={`/properties/${prop.idProperty}`} key={prop.idProperty} className="property-overview-card">
+                            <Link to={`/property/${prop.idProperty}`} key={prop.idProperty} className="property-overview-card">
                                 <div className="card-image-container">
                                     <img src={prop.mainImageUrl || placeholderImage} alt={prop.fullAddress} />
                                     <div className="card-badges">
