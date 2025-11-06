@@ -105,3 +105,36 @@ export const trackPropertyView = async (propertyId) => {
         console.error('Failed to track property view:', error);
     }
 };
+
+/**
+ * Aggiorna lo stato di una proprietà.
+ * @param {string | number} propertyId - L'ID della proprietà.
+ * @param {string} newState - Il nuovo stato da impostare (es. 'OCCUPIED', 'AVAILABLE').
+ * @returns {Promise<object>}
+ */
+export const updatePropertyState = async (propertyId, newState) => {
+    try {
+        // Si ipotizza un endpoint PATCH che accetta il nuovo stato nel body.
+        const response = await api.patch(`/properties/${propertyId}/state`, { state: newState });
+        return response.data;
+    } catch (error) {
+        console.error(`Errore durante l'aggiornamento dello stato per la proprietà ${propertyId}:`, error);
+        throw error;
+    }
+};
+// --- NUOVA FUNZIONE PER LA CANCELLAZIONE ---
+/**
+ * Cancella una proprietà.
+ * @param {string | number} propertyId - L'ID della proprietà da cancellare.
+ * @returns {Promise<void>} - Non restituisce contenuto in caso di successo.
+ */
+export const deleteProperty = async (propertyId) => {
+    try {
+        // Invia una richiesta DELETE all'endpoint appropriato.
+        // Solitamente una DELETE riuscita restituisce uno status 204 (No Content).
+        await api.delete(`/properties/${propertyId}`);
+    } catch (error) {
+        console.error(`Errore durante la cancellazione della proprietà ${propertyId}:`, error);
+        throw error; // Rilancia l'errore per gestirlo nel componente.
+    }
+};

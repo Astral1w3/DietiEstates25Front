@@ -260,10 +260,6 @@ const handleSubmit = (e) => {
                         />
                     </div>
                     
-                    <div className="form-group">
-                        <label htmlFor="civicNumber">Civic Number</label>
-                        <input type="text" id="civicNumber" name="civicNumber" value={formData.civicNumber} onChange={handleInputChange} />
-                    </div>
 
                     <div className="form-group full-width">
                         <label htmlFor="description">Description</label>

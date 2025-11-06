@@ -79,7 +79,7 @@ const BookingsView = () => {
                                 <tr>
                                     <th>Property</th>
                                     <th>Client</th>
-                                    <th>Visit Date & Time</th>
+                                    <th>Visit Date</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -95,7 +95,7 @@ const BookingsView = () => {
                                             <div>{booking.clientName}</div>
                                             <small>{booking.email}</small>
                                         </td>
-                                        <td>{new Date(booking.visit_date).toLocaleString('it-IT', { dateStyle: 'short', timeStyle: 'short' })}</td>
+                                        <td>{new Date(booking.visit_date).toLocaleString('it-IT', { dateStyle: 'short' })}</td>
                                     </tr>
                                 ))}
                             </tbody>

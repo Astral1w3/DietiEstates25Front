@@ -1,7 +1,6 @@
 import React from 'react';
-import './SuccessView.css'; // Importiamo il suo CSS dedicato
+import './SuccessView.css'; // Il suo CSS dedicato
 
-// L'icona SVG fa parte di questo componente
 const SuccessIcon = () => (
     <svg className="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
         <circle className="success-icon__circle" cx="26" cy="26" r="25" fill="none"/>
@@ -10,17 +9,20 @@ const SuccessIcon = () => (
 );
 
 /**
- * Un componente riutilizzabile per mostrare un messaggio di successo con un'icona animata.
+ * Un componente riutilizzabile per mostrare un messaggio di successo come overlay.
  * @param {object} props
- * @param {string} props.title - Il titolo da mostrare (es. "Richiesta Inviata!").
- * @param {React.ReactNode} props.children - Il contenuto del messaggio, può essere testo o altro JSX.
+ * @param {string} props.title - Il titolo da mostrare.
+ * @param {React.ReactNode} props.children - Il contenuto del messaggio.
  */
 const SuccessView = ({ title = "Operazione Completata!", children }) => {
     return (
-        <div className="success-view-container">
-            <SuccessIcon />
-            <h2>{title}</h2>
-            <div>{children}</div>
+        // NUOVO: Aggiunto un div overlay come contenitore principale
+        <div className="success-view-overlay"> 
+            <div className="success-view-container">
+                <SuccessIcon />
+                <h2>{title}</h2>
+                <div className="success-view-message">{children}</div>
+            </div>
         </div>
     );
 };

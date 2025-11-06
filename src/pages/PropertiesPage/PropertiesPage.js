@@ -66,8 +66,6 @@ const PropertiesPage = () => {
                 const pageResponse = await searchPropertiesByLocation(locationQuery, currentPage, pageSize);
                 const fetchedProperties = pageResponse.content || []; 
                 
-                // --- UNICA MODIFICA NECESSARIA ---
-                // Il nostro DTO personalizzato nel backend si chiama 'currentPage'. Usiamo quello.
                 setPageInfo({
                     totalPages: pageResponse.totalPages,
                     totalElements: pageResponse.totalElements,
@@ -249,7 +247,10 @@ return (
                 <div className="map-column">
                     <MapDisplay 
                         properties={displayedProperties} 
-                        hoveredPropertyId={hoveredPropertyId} 
+                        hoveredPropertyId={hoveredPropertyId}
+                        backUrl={backUrlFromSearch} // 1. Passa l'URL per il ritorno
+                        onMarkerEnter={setHoveredPropertyId} // 2. Passa la funzione per impostare l'hover
+                        onMarkerLeave={() => setHoveredPropertyId(null)} // 3. Passa la funzione per rimuovere l'hover
                     />
                 </div>
             </div>

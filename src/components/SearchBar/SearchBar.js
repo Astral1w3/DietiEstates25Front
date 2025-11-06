@@ -16,13 +16,26 @@ const SearchBar = () => {
     // 'place' è l'oggetto completo restituito da Geoapify.
     const handlePlaceSelect = (place) => {
         if (place) {
-            // Estraiamo il nome della città. Usiamo 'city' come priorità, 
-            // ma se non c'è (es. una regione), usiamo 'name'.
-            const locationName = place.properties.city;
-            
-            // Eseguiamo la navigazione alla pagina dei risultati.
-            navigate(`/properties?location=${encodeURIComponent(locationName)}`);
+            const props = place.properties;
+            const locationName = props.city || props.state || props.postcode || props.name;
+
+            if (locationName) {
+                navigate(`/properties?location=${encodeURIComponent(locationName)}`);
+            }
         }
+    };
+
+     const filterSuggestions = (suggestions) => {
+        const allowedTypes = [
+            'city', 
+            'state',      // Le regioni sono spesso di tipo 'state'
+            'county',     // Le province
+            'postcode',
+            'region'      // Aggiungiamo 'region' per sicurezza
+        ];
+        return suggestions.filter(suggestion => 
+            allowedTypes.includes(suggestion.properties.result_type)
+        );
     };
 
     // La tua API Key di Geoapify
@@ -39,13 +52,9 @@ const SearchBar = () => {
                 <GeoapifyGeocoderAutocomplete
                     placeholder="Cerca per città o regione "
                     
-                    // --- CONFIGURAZIONE SPECIFICA PER LA RICERCA ---
-                    // 'type' dice a Geoapify cosa cercare. 'city' è perfetto.
-                    // 'administrative' è un'alternativa se vuoi dare priorità anche a province e regioni.
-                    type="city" 
                     lang="it" // Lingua dei risultati
                     filterByCountryCode={["it"]} // Limita la ricerca solo all'Italia
-                    
+                    suggestionsFilter={filterSuggestions}
                     // --- GESTIONE DEGLI EVENTI ---
                     placeSelect={handlePlaceSelect} // Attivato quando si clicca un suggerimento
                     className="geopify-geocoder-autocomplete"

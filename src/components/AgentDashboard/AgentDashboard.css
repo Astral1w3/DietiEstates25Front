@@ -124,3 +124,122 @@
 .property-overview-card .stat-item svg {
     color: #888;
 }
+
+/* Stile per il contenitore dei pulsanti di azione */
+.property-overview-card .card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+/* Stile base per i pulsanti di azione */
+.card-actions .btn-action {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spazio tra icona e testo */
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 600;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Stile per il pulsante "Set as Sold" */
+.card-actions .btn-sold {
+    background-color: #1e5200; /* Verde successo */
+    color: white;
+}
+
+.card-actions .btn-sold:hover {
+    background-color: #1e5200; /* Verde più scuro */
+}
+
+/* Stile per il pulsante "Delete" */
+.card-actions .btn-delete {
+    background-color: #dc3545; /* Rosso pericolo */
+    color: white;
+}
+
+.card-actions .btn-delete:hover {
+    background-color: #c82333; /* Rosso più scuro */
+}
+
+/* Stile per il testo "Sold" quando la proprietà è venduta */
+.card-actions .sold-status-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: #28a745; /* Stesso verde del pulsante "success" */
+    font-size: 0.9em;
+    padding: 8px 12px;
+}
+
+/* Assicura che la card sia un contenitore flessibile per posizionare le azioni in basso */
+.property-overview-card {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none; /* Rimuove la sottolineatura dal contenitore se era un Link */
+    color: inherit;
+}
+
+/* Contenitore per il link principale, per separarlo dalle azioni */
+.property-overview-card .card-main-link {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Fa in modo che il link occupi tutto lo spazio disponibile */
+}
+
+/* Stile per il contenitore dei pulsanti di azione (invariato ma importante) */
+.property-overview-card .card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Allinea verticalmente gli elementi */
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    margin-top: auto; /* Spinge la barra delle azioni in fondo alla card */
+}
+
+/* =============================================== */
+/* --- Stili per le Azioni sulla Property Card --- */
+/* =============================================== */
+
+
+
+
+/* --- Stile specifico per il pulsante "Set as Sold" --- */
+.card-actions .btn-sold {
+    background-color: #007bff; /* Verde (Successo) */
+    color: white;
+}
+
+.card-actions .btn-sold:hover {
+    background-color: #0056b3; /* Verde più scuro */
+}
+
+/* --- NUOVO STILE per il pulsante "Set as Available" --- */
+.card-actions .btn-available {
+    background-color: #28a745; /* Blu (Azione Primaria) */
+    color: white;
+}
+
+.card-actions .btn-available:hover {
+    background-color: #218838; /* Blu più scuro */
+}
+
+/* --- Stile specifico per il pulsante "Delete" --- */
+.card-actions .btn-delete {
+    background-color: #dc3545; /* Rosso (Pericolo) */
+    color: white;
+}
+
+.card-actions .btn-delete:hover {
+    background-color: #c82333; /* Rosso più scuro */
+}
