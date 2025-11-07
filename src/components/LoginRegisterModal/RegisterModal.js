@@ -19,34 +19,32 @@ const RegisterModal = ({ isOpen, onSwitch }) => {
   const handleContentClick = (e) => {
     e.stopPropagation();
   };
-
+  
   const handleRegisterSubmit = async (e) => {
-    e.preventDefault();
-    // Resetta i messaggi
-    setError('');
-    setSuccess('');
+      e.preventDefault();
+      setError('');
+      setSuccess('');
 
-    if (password !== confirmPassword) {
-      setError("Le password non coincidono!");
-      return;
-    }
+      if (password !== confirmPassword) {
+        setError("Le password non coincidono!");
+        return;
+      }
 
-    try {
-      // Chiama la funzione di registrazione dal contesto
-      await register(email, name, password);
-      
-      // Se la registrazione ha successo
-      setSuccess("Registrazione completata! Ora puoi effettuare il login.");
-      
-      // Opzionale: dopo 2 secondi, passa al modale di login
-      setTimeout(() => {
-        onSwitch('login');
-      }, 2000);
+      try {
+        await register(email, name, password);
+        
+        setSuccess("Registrazione completata! Ora puoi effettuare il login.");
+        
+        setTimeout(() => {
+          onSwitch('login');
+        }, 2000);
 
-    } catch (err) {
-      // Se il backend restituisce un errore (es. "Email già in uso")
-      setError(err.response?.data || "Si è verificato un errore. Riprova.");
-    }
+      } catch (err) {
+        // --- FIX: Estrai la proprietà .message dall'oggetto di errore ---
+        // Controlla se err.response.data.message esiste, altrimenti usa un testo generico.
+        const errorMessage = err.response?.data?.message || "Si è verificato un errore. Riprova.";
+        setError(errorMessage);
+      }
   };
 
   return (
