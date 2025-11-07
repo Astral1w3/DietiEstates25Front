@@ -207,7 +207,7 @@ const handleSubmit = (e) => {
     };
 
     return (
-        <GeoapifyContext apiKey={process.env.REACT_APP_GEOAPIFY_API_KEY}>
+        <GeoapifyContext apiKey="10c85af945f84d199501c9b466918a85">
             <div className="card">
                 <h2>Add New Property</h2>
                 <hr />
