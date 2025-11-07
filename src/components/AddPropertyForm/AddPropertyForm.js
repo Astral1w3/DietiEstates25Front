@@ -196,8 +196,8 @@ const handleSubmit = (e) => {
         };
 
         try {
-            const result = await createProperty(payload, images);
-            setMessage({ text: 'Proprietà inserita con successo!', type: 'success' });
+            await createProperty(payload, images);
+            setMessage({ text: 'Proprietà inserita con successo!', type: 'success'});
             resetForm();
         } catch (error) {
             setMessage({ text: error.message, type: 'error' });

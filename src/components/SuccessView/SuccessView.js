@@ -14,7 +14,7 @@ const SuccessIcon = () => (
  * @param {string} props.title - Il titolo da mostrare.
  * @param {React.ReactNode} props.children - Il contenuto del messaggio.
  */
-const SuccessView = ({ title = "Operazione Completata!", children }) => {
+const SuccessView = ({ title = "Operation Complete!", children }) => {
     return (
         // NUOVO: Aggiunto un div overlay come contenitore principale
         <div className="success-view-overlay"> 

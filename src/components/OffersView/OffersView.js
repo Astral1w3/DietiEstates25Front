@@ -139,7 +139,7 @@ const OffersView = () => {
                                 {filteredOffers.map(offer => (
                                     <tr key={offer.id_offer}>
                                         <td>
-                                            <Link to={`/properties/${offer.id_property}`} className="property-link">
+                                            <Link to={`/property/${offer.id_property}`} className="property-link">
                                                 {offer.propertyAddress}
                                             </Link>
                                         </td>

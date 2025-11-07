@@ -57,7 +57,6 @@ function Login(){
                 <div>
                     <p><strong>Utente Autenticato:</strong> Sì</p>
                     <p><strong>Dati Utente:</strong></p>
-                    {/* Usiamo <pre> e JSON.stringify per mostrare l'oggetto user in modo leggibile */}
                     <pre>{JSON.stringify(user, null, 2)}</pre>
                 </div>
             ) : (

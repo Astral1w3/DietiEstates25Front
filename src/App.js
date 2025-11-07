@@ -3,7 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import { AuthProvider } from './context/AuthContext'; 
 import Header from './components/Header/Header.js'; 
-import NoMatch from './components/NoMatch';
+import NoMatch from './components/NoMatch/NoMatch.js';
 import RoleBasedProtectedRoute from './components/RoleBasedProtectedRoute';
 import PropertyDetailPage from './pages/PropertyDetailPage/PropertyDetailPage';
 import "./App.css";

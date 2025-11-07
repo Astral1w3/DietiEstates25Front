@@ -104,11 +104,11 @@ const LoginModal = ({ isOpen, onSwitch }) => {
       </form>
 
       <p className="register-prompt" style={{ marginTop: '1rem' }}>
-        Non hai un account? <a href="#!" className="register-link" onClick={(e) => {
+        Don't have an account? <a href="#!" className="register-link" onClick={(e) => {
           e.preventDefault();
           onSwitch('register');
         }}>
-          Registrati ora
+          Register now
         </a>
       </p>
       <div className="divider">OR</div>

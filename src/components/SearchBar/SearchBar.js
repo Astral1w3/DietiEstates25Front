@@ -50,7 +50,7 @@ const SearchBar = () => {
             
                 {/* Questo è il componente di autocompletamento */}
                 <GeoapifyGeocoderAutocomplete
-                    placeholder="Cerca per città o regione "
+                    placeholder="Search by city or region "
                     
                     lang="it" // Lingua dei risultati
                     filterByCountryCode={["it"]} // Limita la ricerca solo all'Italia

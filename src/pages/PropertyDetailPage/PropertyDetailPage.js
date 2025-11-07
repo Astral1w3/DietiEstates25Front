@@ -41,8 +41,8 @@ const PropertyDetailPage = () => {
                 setProperty(data);
                 setError(null);
             } catch (err) {
-                console.error("Errore nel recupero o tracciamento della proprietà:", err);
-                setError("Immobile non trovato o errore nel caricamento.");
+                console.error("Error retrieving or tracking property:", err);
+                setError("Property not found or loading error.");
                 setProperty(null);
             } finally {
                 setLoading(false);
@@ -66,8 +66,8 @@ const PropertyDetailPage = () => {
                 setProperty(data);
                 setError(null);
             } catch (err) {
-                console.error("Errore nel recupero dei dettagli dell'immobile:", err);
-                setError("Immobile non trovato o errore nel caricamento.");
+                console.error("Error retrieving property details:", err);
+                setError("Property not found or loading error.");
                 setProperty(null);
             } finally {
                 setLoading(false);
@@ -79,9 +79,9 @@ const PropertyDetailPage = () => {
 
 
     // --- LOGICA DI RENDER ---
-    if (loading) return <div className="property-detail-container"><h2>Caricamento...</h2></div>;
+    if (loading) return <div className="property-detail-container"><h2>Loading...</h2></div>;
     if (error) return <div className="property-detail-container"><h2>{error}</h2></div>;
-    if (!property) return <div className="property-detail-container"><h2>Immobile non trovato.</h2></div>;
+    if (!property) return <div className="property-detail-container"><h2>Property not found.</h2></div>;
 
     const isForRent = property.saleTypes.some(st => st.saleType.toLowerCase() === 'rent');
     const fullAddress = `${property.address.street}, ${property.address.houseNumber} - ${property.address.municipality.municipalityName} (${property.address.municipality.province.acronym})`;
@@ -89,7 +89,7 @@ const PropertyDetailPage = () => {
     return (
         <div className="property-detail-container">
             <main className="property-detail-main">
-                <Link to={backLinkUrl} className="back-to-search-link">← Torna alla Ricerca</Link>
+                <Link to={backLinkUrl} className="back-to-search-link">← Back to Search</Link>
                 {/* Il componente gallery ora riceve le immagini dal backend */}
                 <PropertyGallery images={property.imageUrls} />
                 
@@ -99,26 +99,26 @@ const PropertyDetailPage = () => {
                         <h2>
                             {/* Formattazione del prezzo dal dato numerico */}
                             {property.price.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
-                            {isForRent && ' / mese'}
+                            {isForRent && ' / month'}
                         </h2>
                         <div className="stats">
                             {/* Dati presi direttamente dal modello Property */}
                             <span>{property.numberOfRooms} {property.numberOfRooms === 1 ? 'Locale' : 'Locali'}</span>
                             <span>{property.squareMeters} m²</span>
-                            <span>Classe Energetica {property.energyClass}</span>
+                            <span>Energy Class {property.energyClass}</span>
                         </div>
                     </div>
 
                     <div className="contact-box">
                         <button className="btn btn-primary btn-contact" onClick={() => setIsTourModalOpen(true)} disabled={!isAuthenticated}>
-                            Richiedi una Visita
+                            Request a Visit
                         </button>
                         {!isForRent && (
                             <button className="btn btn-primary btn-contact" onClick={() => setIsOfferModalOpen(true)} disabled={!isAuthenticated}>
-                                Fai un'Offerta
+                                Make an Offer
                             </button>
                         )}
-                        {!isAuthenticated && (<p className="auth-message">Devi effettuare l'accesso per eseguire questa azione.</p>)}
+                        {!isAuthenticated && (<p className="auth-message">You must log in to perform this action.</p>)}
                     </div>
                 </div>
 
@@ -141,17 +141,17 @@ const PropertyDetailPage = () => {
 
                 {/* --- Sezioni informative dinamiche --- */}
                 <section className="info-section">
-                    <h2>Descrizione</h2>
+                    <h2>Description</h2>
                     <p>{property.description}</p>
                 </section>
                 
                 <section className="info-section">
-                    <h2>Caratteristiche Principali</h2>
+                    <h2>Main Features</h2>
                     <ul>{featureList.map((feature, i) => <li key={i}>{feature}</li>)}</ul>
                 </section>
 
                 <section className="info-section">
-                    <h2>Posizione</h2>
+                    <h2>Position</h2>
                     {/* La mappa ora mostra la posizione dell'immobile specifico */}
                     <div className="map-wrapper"><MapDisplay properties={[property]} hoveredPropertyId={property.idProperty} /></div>
                 </section>

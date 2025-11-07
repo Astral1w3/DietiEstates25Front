@@ -30,7 +30,7 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
                     setBookedDates(dates);
                 } catch (err) {
                     // Se fallisce, mostriamo un errore nel modale
-                    setError("Impossibile caricare le date disponibili.");
+                    setError("Unable to load available dates.");
                 } finally {
                     setIsLoadingDates(false);
                 }
@@ -53,7 +53,7 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
 
     const handleSubmit = async () => {
         if (!selectedDate) {
-            setError("Per favore, seleziona una data.");
+            setError("Please select a date.");
             return;
         }
 
@@ -71,8 +71,8 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
                 handleClose();
             }, 2500);
         } catch (err) {
-            console.error("Errore durante la prenotazione della visita:", err);
-            setError("Si è verificato un errore. Riprova più tardi.");
+            console.error("Error while booking the visit:", err);
+            setError("An error occurred. Please try again later.");
         } finally {
             setIsSubmitting(false);
         }
@@ -83,19 +83,19 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
 
                 {isSuccess ? (
                     // MOLTO PIÙ PULITO: Usiamo il nuovo componente passandogli titolo e messaggio
-                    <SuccessView title="Richiesta Inviata!">
+                    <SuccessView title="Request Sent!">
                         <p>
-                            La tua richiesta di visita per il giorno <br/>
-                            <strong>{selectedDate.toLocaleDateString('it-IT')}</strong> è stata inviata. <br/>
-                            A presto!
+                            Your visit request for the day <br/>
+                            <strong>{selectedDate.toLocaleDateString('it-IT')}</strong> was sent. <br/>
+                            See you soon!
                         </p>
                     </SuccessView>
                 ) : (
                     <>
-                        <h2>Seleziona una data per la visita</h2>
+                        <h2>Select a date for your visit</h2>
                         
                         {isLoadingDates ? (
-                            <p>Caricamento calendario...</p>
+                            <p>Loading calendar...</p>
                         ) : (
                             <DatePicker
                                 selected={selectedDate}
@@ -114,10 +114,10 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
 
                         <div className="modal-actions">
                             <button className="btn btn-secondary" onClick={handleClose} disabled={isSubmitting}>
-                                Annulla
+                                Cancel
                             </button>
                             <button className="btn btn-primary" onClick={handleSubmit} disabled={isSubmitting || !selectedDate || isLoadingDates}>
-                                {isSubmitting ? 'Invio...' : 'Invia Richiesta'}
+                                {isSubmitting ? 'Sending...' : 'Send Request'}
                             </button>
                         </div>
                     </>

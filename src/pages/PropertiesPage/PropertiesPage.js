@@ -85,8 +85,8 @@ const PropertiesPage = () => {
                 setFilters(newFilters);
 
             } catch (err) {
-                console.error("Errore nel recupero delle proprietà:", err);
-                setError("Impossibile caricare le proprietà. Riprova più tardi.");
+                console.error("Error retrieving properties:", err);
+                setError("Unable to load properties. Please try again later.");
             } finally { 
                 setIsLoading(false); 
             }
@@ -159,7 +159,7 @@ const PropertiesPage = () => {
     };
     
     const locationQuery = searchParams.get('location');
-    const pageTitle = locationQuery ? `Risultati per: "${locationQuery}"` : "Cerca una località per iniziare";
+    const pageTitle = locationQuery ? `Results for: "${locationQuery}"` : "Find a location to get started";
     const backUrlFromSearch = location.pathname + location.search;
     console.log(pageInfo)
 return (
@@ -170,10 +170,10 @@ return (
                     <div className="listings-header">
                         <h2>{pageTitle}</h2>
                         <div className="listings-actions">
-                            <span>{pageInfo ? pageInfo.totalElements : 0} risultati</span>
+                            <span>{pageInfo ? pageInfo.totalElements : 0} results</span>
                             <div className="filter-wrapper">
                                 <button onClick={() => setFilterOpen(prev => !prev)} className="btn-filter">
-                                    Filtri ▼
+                                    Filters ▼
                                 </button>
                                 <FilterDropdown
                                     isOpen={isFilterOpen}
@@ -191,7 +191,7 @@ return (
                     </div>
 
                     <div className="property-grid">
-                        {isLoading && <p>Caricamento...</p>}
+                        {isLoading && <p>Loading...</p>}
                         {error && <p style={{ color: 'red' }}>{error}</p>}
                         {!isLoading && !error && displayedProperties.length > 0 ? (
                             displayedProperties.map(property => (
@@ -209,7 +209,7 @@ return (
                                 </Link>
                             ))
                         ) : (
-                            !isLoading && !error && <p>Nessun risultato trovato. Prova una nuova ricerca.</p>
+                            !isLoading && !error && <p>No results found. Try a new search.</p>
                         )}
                     </div>
                     
@@ -221,7 +221,7 @@ return (
                                     onClick={() => handlePageChange(pageInfo.currentPage - 1)}
                                     disabled={pageInfo.currentPage === 0}
                                 >
-                                    &laquo; Precedente
+                                    &laquo; Previous
                                 </button>
 
                                 <span>
@@ -229,14 +229,14 @@ return (
                                     Ora che siamo dentro il controllo, 'pageInfo.currentPage' 
                                     è garantito essere un numero.
                                     */}
-                                    Pagina {pageInfo.currentPage + 1} di {pageInfo.totalPages}
+                                    Page {pageInfo.currentPage + 1} of {pageInfo.totalPages}
                                 </span>
 
                                 <button
                                     onClick={() => handlePageChange(pageInfo.currentPage + 1)}
                                     disabled={pageInfo.currentPage + 1 >= pageInfo.totalPages}
                                 >
-                                    Successiva &raquo;
+                                    Next &raquo;
                                 </button>
                             </>
                         )}

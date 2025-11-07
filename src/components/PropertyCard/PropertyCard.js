@@ -18,19 +18,19 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
 
     const displayAddress = property.address
         ? `${property.address.street}, ${property.address.houseNumber}`
-        : 'Indirizzo non disponibile';
+        : 'Address not available';
 
     const displayLocation = property.address
         ? `${property.address.municipality.municipalityName}`
-        : 'Località non disponibile';
+        : 'Location not available';
 
     const displayZipCode = property.address
         ? `${property.address.municipality.zipCode}`
-        : 'ZipCode non disponibile';
+        : 'Zip Code not available';
     
     const formattedPrice = property.price 
         ? new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(property.price)
-        : 'Prezzo non disponibile';
+        : 'Price not available';
 
     // --- NUOVO BLOCCO LOGICO: Identifica i servizi di prossimità ---
     // Controlliamo se la proprietà ha dei servizi, altrimenti usiamo un array vuoto.
@@ -45,7 +45,7 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
     return (
         <div className="property-card" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
             <div className="card-image-container">
-                <img src={imageUrl} alt={`Immagine di ${displayAddress}`} />
+                <img src={imageUrl} alt={`Image of ${displayAddress}`} />
                 {property.tags && property.tags.map(tag => (
                     <span key={tag} className="card-tag">{tag}</span>
                 ))}
@@ -53,11 +53,10 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
             <div className="card-details">
                 <p className="card-price">{formattedPrice}</p>
                 <p className="card-specs">
-                    <span>{property.numberOfRooms || 'N/A'} stanze</span>
+                    <span>{property.numberOfRooms || 'N/A'} rooms</span>
                     <span> • {property.squareMeters || 'N/A'} m²</span>
                     <span className="card-views">
                     <FaEye /> 
-                    {/* Accedi al dato tramite la struttura nidificata */}
                     {property.propertyStats ? property.propertyStats.numberOfViews : 0}
                     </span>
                 </p>
@@ -65,13 +64,12 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
                 <p className="card-city">{displayLocation} - {displayZipCode}</p>
 
                 {nearbyAmenities.map((amenity, index) => (
-                            // SOLUZIONE: Usiamo l'etichetta + l'indice per garantire una key unica.
                             <span key={`${amenity.label}-${index}`} className="amenity-tag">
                                 {amenity.emoji} {amenity.label}
                             </span>
                         ))}
 
-                <button className="card-cta-btn">Maggiori Dettagli</button>
+                <button className="card-cta-btn">More Details</button>
             </div>
         </div>
     );

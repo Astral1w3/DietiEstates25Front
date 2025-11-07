@@ -46,7 +46,7 @@ const MapDisplay = ({ properties, hoveredPropertyId, backUrl, onMarkerEnter, onM
 
     if (!GEOAPIFY_API_KEY || GEOAPIFY_API_KEY === "LA_TUA_API_KEY_DI_GEOAPIFY") {
         return <div style={{padding: '20px', backgroundColor: '#fff2f2'}}>
-            <strong>Attenzione:</strong> Inserisci la tua API Key di Geoapify nel file MapDisplay.js per visualizzare la mappa.
+            <strong>Attention:</strong> Enter your Geoapify API key into the MapDisplay.js file to display the map.
         </div>
     }
 

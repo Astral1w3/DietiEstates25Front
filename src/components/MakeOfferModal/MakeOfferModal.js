@@ -25,11 +25,11 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
 
         // La validazione frontend rimane come prima linea di difesa
         if (!priceValue || priceValue <= 0) {
-            setError('Inserisci un importo valido.');
+            setError('Please enter a valid amount.');
             return;
         }
         if (priceValue >= currentPrice) {
-            setError(`L'offerta deve essere inferiore al prezzo attuale.`);
+            setError(`The offer must be lower than the current price.`);
             return;
         }
 
@@ -58,7 +58,7 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
                 setError(err.response.data.message);
             } else {
                 // Altrimenti, è un errore di rete o un altro problema imprevisto
-                setError("Si è verificato un errore di connessione. Riprova più tardi.");
+                setError("A connection error occurred. Please try again later.");
             }
         } finally {
             // Questa parte viene eseguita sia in caso di successo che di errore
@@ -73,22 +73,22 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
                 {isSuccess ? (
                     <SuccessView title="Offerta Inviata!">
                         <p>
-                            La tua offerta di{' '}
+                            Your offer of{' '}
                             <strong>
                                 {parseFloat(offerPrice).toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
                             </strong>
-                            {' '}è stata inviata con successo.
+                            {' '}was sent successfully.
                         </p>
                     </SuccessView>
                 ) : (
                     <>
-                        <h2>Fai la tua offerta</h2>
+                        <h2>Make your offer</h2>
                         <p>
-                            Prezzo attuale: {currentPrice.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
+                            Current price: {currentPrice.toLocaleString('it-IT', { style: 'currency', currency: 'EUR' })}
                         </p>
                         
                         <div className="offer-input-group">
-                            <label htmlFor="offerPrice">La tua offerta (€)</label>
+                            <label htmlFor="offerPrice">Your offer (€)</label>
                             <input
                                 type="number"
                                 id="offerPrice"
@@ -103,7 +103,7 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
                         
                         <div className="modal-actions">
                             <button className="btn btn-secondary" onClick={handleClose} disabled={isSubmitting}>
-                                Annulla
+                                Cancel
                             </button>
                             <button 
                                 className="btn btn-primary" 
