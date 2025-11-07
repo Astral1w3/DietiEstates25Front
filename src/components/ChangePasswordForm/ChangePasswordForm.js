@@ -69,30 +69,40 @@ const ChangePasswordForm = () => {
 
     // La nuova funzione 'handleConfirmSubmit' contiene la logica della chiamata API
     const handleConfirmSubmit = async () => {
-        setIsModalOpen(false);
-        setIsSubmitting(true);
+    setIsModalOpen(false);
 
-        try {
-            const payload = {
-                email: user.email,
-                currentPassword: passwords.currentPassword,
-                newPassword: passwords.newPassword,
-            };
-            if (!isPasswordSet) {
-                delete payload.currentPassword;
-            }
+    if (!user) {
+        setMessage({ text: 'User is not logged in.', type: 'error' });
+        return;
+    }
 
-            const response = await api.patch('/user/change-password', payload);
-            
-            const successText = response.data;
-            setMessage({ text: successText || 'Password updated successfully!', type: 'success' });
-            setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            if (!isPasswordSet) {
-                setIsPasswordSet(true);
-            }
+    setIsSubmitting(true);
+
+    try {
+        const payload = {
+            email: user.email,
+            currentPassword: passwords.currentPassword,
+            newPassword: passwords.newPassword,
+        };
+        if (!isPasswordSet) {
+            delete payload.currentPassword;
+        }
+
+        const response = await api.patch('/user/change-password', payload);
+
+        // --- FIX: Extract the message string from the response data object ---
+        const successText = response.data.message || 'Password updated successfully!';
+        
+        setMessage({ text: successText, type: 'success' });
+        setPasswords({ currentPassword: '', newPassword: '', confirmPassword: '' });
+        if (!isPasswordSet) {
+            setIsPasswordSet(true);
+        }
         } catch (error) {
-            const errorText = error.response?.data || 'An error occurred while updating the password.';
-            console.error("Failed to submit new password:", errorText);
+            // --- FIX: Extract the message from the error response data object too ---
+            const errorText = error.response?.data?.message || 'An error occurred while updating the password.';
+            
+            console.error("Failed to submit new password:", error.response?.data || error);
             setMessage({ text: errorText, type: 'error' });
         } finally {
             setIsSubmitting(false);
