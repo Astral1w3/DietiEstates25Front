@@ -56,7 +56,7 @@ const AddPropertyForm = () => {
         try {
             await Promise.all(
                 amenitiesToSearch.map(async (amenity) => {
-                    const url = `https://api.geoapify.com/v2/places?categories=${amenity.category}&filter=circle:${lon},${lat},${radius}&limit=1&apiKey=${apiKey}`;
+                    const url = `https://api.geoapify.com/v2/places?categories=${amenity.category}&filter=circle:${lon},${lat},${radius}&limit=1&apiKey=10c85af945f84d199501c9b466918a85`;
                     const response = await fetch(url);
                     const data = await response.json();
 
@@ -197,7 +197,7 @@ const handleSubmit = (e) => {
 
         try {
             await createProperty(payload, images);
-            setMessage({ text: 'Proprietà inserita con successo!', type: 'success'});
+            setMessage({ text: 'Property successfully added!', type: 'success'});
             resetForm();
         } catch (error) {
             setMessage({ text: error.message, type: 'error' });
