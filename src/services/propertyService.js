@@ -1,4 +1,4 @@
-import api from './api'; // Corretto il percorso
+import api from './api';
 
 /**
  * Recupera una singola proprietà tramite il suo ID.
@@ -15,7 +15,6 @@ export const getPropertyById = async (propertyId) => {
     }
 };
 
-// --- INIZIO BLOCCO MODIFICATO ---
 
 /**
  * Cerca le proprietà in base a una località, con supporto per la paginazione.
@@ -26,8 +25,6 @@ export const getPropertyById = async (propertyId) => {
  */
 export const searchPropertiesByLocation = async (location, page = 0, size = 10) => {
     if (!location) {
-        // Se non c'è una location, restituiamo una struttura di pagina vuota
-        // per evitare errori nel componente che la riceve.
         return {
             content: [],
             totalPages: 0,
@@ -36,19 +33,14 @@ export const searchPropertiesByLocation = async (location, page = 0, size = 10) 
         };
     }
     try {
-        // Usiamo l'oggetto `params` di Axios per costruire l'URL in modo pulito e sicuro.
-        // Axios si occuperà di creare la stringa ?location=...&page=...&size=...
         const response = await api.get('/properties/search', {
             params: {
                 location: location,
                 page: page,
                 size: size
-                // Puoi aggiungere un ordinamento di default se vuoi, es:
-                // sort: 'price,asc'
             }
         });
         
-        // Restituisce l'intero oggetto Page { content: [...], ... }
         return response.data;
     } catch (error) {
         console.error("Errore nel recupero delle proprietà:", error);
@@ -65,32 +57,24 @@ export const searchPropertiesByLocation = async (location, page = 0, size = 10) 
  */
 export const createProperty = async (propertyData, images) => {
     try {
-        // FormData è necessario per inviare sia dati JSON che file.
         const formData = new FormData();
 
-        // Aggiungi i dati JSON della proprietà come stringa.
-        // Il backend dovrà quindi fare il parse di questa stringa.
         formData.append('propertyData', JSON.stringify(propertyData));
 
-        // Aggiungi ogni immagine al FormData.
         images.forEach(image => {
             formData.append('images', image);
         });
 
-        // Esegui la richiesta POST con FormData.
-        // Axios imposterà automaticamente l'header 'Content-Type' a 'multipart/form-data'.
         const response = await api.post('/properties', formData);
         
         return response.data;
     } catch (error) {
         console.error("Errore nella creazione della proprietà:", error);
-        // È una buona pratica rilanciare l'errore o gestirlo in modo più specifico.
         throw error;
     }
 };
 
 
-// --- ECCO LA FUNZIONE CHE HAI CHIESTO, IMPLEMENTATA CON 'api' ---
 /**
  * Traccia la visualizzazione di una proprietà.
  * Fa una chiamata POST per incrementare il contatore sul backend.
@@ -98,10 +82,8 @@ export const createProperty = async (propertyData, images) => {
  */
 export const trackPropertyView = async (propertyId) => {
     try {
-        // L'endpoint è relativo al baseURL di 'api'.
         await api.post(`/properties/${propertyId}/increment-view`);
     } catch (error) {
-        // Il tracciamento non è un'operazione critica, quindi basta un log in caso di errore.
         console.error('Failed to track property view:', error);
     }
 };
@@ -114,7 +96,6 @@ export const trackPropertyView = async (propertyId) => {
  */
 export const updatePropertyState = async (propertyId, newState) => {
     try {
-        // Si ipotizza un endpoint PATCH che accetta il nuovo stato nel body.
         const response = await api.patch(`/properties/${propertyId}/state`, { state: newState });
         return response.data;
     } catch (error) {
@@ -122,7 +103,6 @@ export const updatePropertyState = async (propertyId, newState) => {
         throw error;
     }
 };
-// --- NUOVA FUNZIONE PER LA CANCELLAZIONE ---
 /**
  * Cancella una proprietà.
  * @param {string | number} propertyId - L'ID della proprietà da cancellare.
@@ -130,11 +110,9 @@ export const updatePropertyState = async (propertyId, newState) => {
  */
 export const deleteProperty = async (propertyId) => {
     try {
-        // Invia una richiesta DELETE all'endpoint appropriato.
-        // Solitamente una DELETE riuscita restituisce uno status 204 (No Content).
         await api.delete(`/properties/${propertyId}`);
     } catch (error) {
         console.error(`Errore durante la cancellazione della proprietà ${propertyId}:`, error);
-        throw error; // Rilancia l'errore per gestirlo nel componente.
+        throw error;
     }
 };

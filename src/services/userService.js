@@ -11,11 +11,9 @@ import api from './api'
  */
 export const createUser = async (userData) => {
     try {
-        // Effettua una richiesta POST all'endpoint '/users' per creare un nuovo utente
         const response = await api.post('/management/users', userData);
         return response.data;
     } catch (error) {
-        // In caso di errore, lo logga nella console e lo propaga
         console.error("Errore durante la creazione dell'utente:", error);
         throw error;
     }

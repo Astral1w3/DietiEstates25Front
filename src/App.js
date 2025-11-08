@@ -11,7 +11,6 @@ import "./App.css";
 function App() {
 
   const Home = lazy(() => import('./pages/Home/Home.js'));
-  //const Login = lazy(() => import('./pages/Login.js'));
   const Profile = lazy(() => import('./pages/Profile/Profile.js'));
   const PropertiesPage = lazy(() => import('./pages/PropertiesPage/PropertiesPage.js'));
 
@@ -32,15 +31,14 @@ function App() {
   const spinnerStyle = {
     width: '50px',
     height: '50px',
-    border: '6px solid #f4f4f4', // Corrisponde a var(--color-surface)
-    borderTop: '6px solid #e24747', // Corrisponde a var(--color-primary)
+    border: '6px solid #f4f4f4',
+    borderTop: '6px solid #e24747',
     borderRadius: '50%',
-    animation: 'spin 1s linear infinite', // Usa l'animazione definita nel CSS
+    animation: 'spin 1s linear infinite',
   };
 
 
   return (
-    //    Questo rende i dati di autenticazione disponibili a tutti i componenti figli (Header e Routes)
     <AuthProvider>
       <div className="App">
         <Header />
@@ -56,7 +54,6 @@ function App() {
             
             <Route path="/" element={<Home />} />
             <Route path="/properties" element={<PropertiesPage />} />
-            {/*<Route path="/login" element={<Login />} />*/}
             <Route path="/property/:propertyId" element={<PropertyDetailPage />} /> 
             
             <Route

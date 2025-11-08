@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './ChangePasswordForm.css';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
-import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // <-- 1. IMPORTA IL MODALE
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const ChangePasswordForm = () => {
     const { user } = useAuth();
@@ -16,7 +16,6 @@ const ChangePasswordForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState({ text: '', type: '' });
 
-    // --- 2. AGGIUNGI STATO PER IL MODALE ---
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
@@ -43,9 +42,7 @@ const ChangePasswordForm = () => {
         setPasswords(prevState => ({ ...prevState, [name]: value }));
     };
 
-    // --- 3. MODIFICA LA GESTIONE DEL SUBMIT ---
 
-    // La vecchia funzione 'handleSubmit' ora fa solo validazione e apre il modale
     const handleSubmit = (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
@@ -63,11 +60,9 @@ const ChangePasswordForm = () => {
             return;
         }
         
-        // Se la validazione passa, apri il modale
         setIsModalOpen(true);
     };
 
-    // La nuova funzione 'handleConfirmSubmit' contiene la logica della chiamata API
     const handleConfirmSubmit = async () => {
     setIsModalOpen(false);
 
@@ -90,7 +85,6 @@ const ChangePasswordForm = () => {
 
         const response = await api.patch('/user/change-password', payload);
 
-        // --- FIX: Extract the message string from the response data object ---
         const successText = response.data.message || 'Password updated successfully!';
         
         setMessage({ text: successText, type: 'success' });
@@ -99,7 +93,6 @@ const ChangePasswordForm = () => {
             setIsPasswordSet(true);
         }
         } catch (error) {
-            // --- FIX: Extract the message from the error response data object too ---
             const errorText = error.response?.data?.message || 'An error occurred while updating the password.';
             
             console.error("Failed to submit new password:", error.response?.data || error);
@@ -143,7 +136,7 @@ const ChangePasswordForm = () => {
                 </div>
             </form>
 
-            {/* --- 4. AGGIUNGI IL COMPONENTE MODALE QUI --- */}
+            
             <ConfirmationModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}

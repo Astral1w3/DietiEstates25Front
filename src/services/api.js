@@ -8,8 +8,6 @@ const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
-        // --- CORREZIONE FONDAMENTALE ---
-        // Leggi da localStorage, non da sessionStorage, per essere coerente con AuthContext
         const token = localStorage.getItem('token'); 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;

@@ -6,12 +6,10 @@ import './ProfileMenu.css';
 const ProfileMenu = ({ activeView, onSelectView }) => {
     const { user } = useAuth();
     
-    // Se non c'è un utente o un ruolo, non mostrare nulla
     if (!user || !user.role) {
         return null;
     }
 
-    // Filtra le opzioni del menu in base ai permessi del ruolo dell'utente
     const availableOptions = PERMISSIONS[user.role] || [];
 
     return (

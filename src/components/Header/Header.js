@@ -7,14 +7,13 @@ import './Header.css';
 
 const Header = () => {
     const [modalView, setModalView] = useState('none');
-    const { isAuthenticated, user } = useAuth(); // Estrae i valori dal tuo AuthContext
+    const { isAuthenticated, user } = useAuth();
     const location = useLocation();
 
     
     const transparentHeaderRoutes = ['/']; 
     const isTransparentTheme = transparentHeaderRoutes.includes(location.pathname);
     
-    // La classe base è sempre 'main-header', cambiamo solo il tema colori
     const headerClasses = `main-header ${isTransparentTheme ? 'theme-transparent' : 'theme-solid'}`;
 
     const switchModal = (target) => setModalView(target);
@@ -33,9 +32,8 @@ const Header = () => {
                 <div className="nav-right">
                     
                     {isAuthenticated ? (
-                        // Header Privato
                         <>
-                            {/* L'uso di user?.name è sicuro anche se user fosse momentaneamente non definito */}
+                            
                             <span className="welcome-message">Hello, {user?.username}!</span> 
                             <Link to="/profile" className="profile-icon" aria-label="Vai al profilo">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -45,7 +43,6 @@ const Header = () => {
                             </Link>
                         </>
                     ) : (   
-                        // Header Pubblico
                         <button onClick={() => setModalView('login')} className="btn-login">
                             Signup or Login
                         </button>
@@ -57,7 +54,7 @@ const Header = () => {
                 </div>
             </header>
 
-            {/* I modali si mostrano solo se l'utente non è loggato */}
+            
             {!isAuthenticated && modalView === 'login' && (
                 <LoginModal isOpen={true} onSwitch={switchModal} />
             )}

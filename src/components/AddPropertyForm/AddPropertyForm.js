@@ -5,7 +5,7 @@ import '@geoapify/geocoder-autocomplete/styles/minimal.css';
 import './AddPropertyForm.css';
 
 import { createProperty } from '../../services/propertyService';
-import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // <-- 1. IMPORTA IL MODALE
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
 const availableServices = [
     { id: 'concierge', label: 'Concierge', emoji: '🛎️' },
@@ -33,12 +33,11 @@ const AddPropertyForm = () => {
     const [images, setImages] = useState([]);
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
-    const [isCheckingAmenities, setIsCheckingAmenities] = useState(false); // Stato per il caricamento dei servizi
+    const [isCheckingAmenities, setIsCheckingAmenities] = useState(false);
     const [selectedPlace, setSelectedPlace] = useState(null);
     const fileInputRef = useRef(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // --- NUOVA FUNZIONE PER VERIFICARE I SERVIZI NELLE VICINANZE ---
     const checkNearbyAmenities = async (lat, lon) => {
         setIsCheckingAmenities(true);
         const apiKey = process.env.REACT_APP_GEOAPIFY_API_KEY;
@@ -62,7 +61,7 @@ const AddPropertyForm = () => {
 
                     if (data.features && data.features.length > 0) {
                         updatedServices[amenity.serviceId] = true;
-                        // Aggiungiamo il nome del luogo trovato all'array
+                        
                         const placeName = data.features[0].properties.name;
                         if (placeName) {
                             foundNames.push(placeName);
@@ -71,10 +70,10 @@ const AddPropertyForm = () => {
                 })
             );
             setServices(updatedServices);
-            return foundNames; // Restituisce l'array dei nomi
+            return foundNames;
         } catch (error) {
             console.error("Errore durante la verifica dei servizi vicini:", error);
-            return []; // In caso di errore, restituisce un array vuoto
+            return [];
         } finally {
             setIsCheckingAmenities(false);
         }
@@ -125,14 +124,11 @@ const AddPropertyForm = () => {
         const placeDetails = { fullAddress: formatted, street, housenumber, city, postcode, state, county, latitude: lat, longitude: lon };
         setSelectedPlace(placeDetails);
 
-        // 1. Esegui la verifica e ottieni i nomi
         const nearbyNames = await checkNearbyAmenities(placeDetails.latitude, placeDetails.longitude);
 
-        // 2. Se abbiamo trovato dei nomi, li aggiungiamo alla descrizione
         if (nearbyNames.length > 0) {
             const amenitiesText = "\n\nNelle immediate vicinanze: " + nearbyNames.join(', ') + ".";
             
-            // Usiamo una funzione di aggiornamento per accodare il testo in modo sicuro
             setFormData(prevFormData => ({
                 ...prevFormData,
                 description: (prevFormData.description || '') + amenitiesText
@@ -143,7 +139,6 @@ const handleSubmit = (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
 
-        // Esegui i controlli di validazione prima di aprire il modale
         if (!selectedPlace) {
             setMessage({ text: 'Please select a valid address from the suggestions.', type: 'error' });
             return;
@@ -153,13 +148,10 @@ const handleSubmit = (e) => {
             return;
         }
         
-        // Se i controlli passano, apri il modale per la conferma
         setIsModalOpen(true);
     };
 
-    // Questa nuova funzione contiene la logica di invio che prima era in handleSubmit
     const handleConfirmSubmit = async () => {
-        // Chiudi subito il modale e attiva l'indicatore di caricamento
         setIsModalOpen(false);
         setIsLoading(true);
 
@@ -221,7 +213,7 @@ const handleSubmit = (e) => {
                             <label htmlFor="Sale">For Sale</label>
                         </div>
                     </div>
-                    {/* ... (resto del form grid) ... */}
+                    {}
                     <div className="form-grid">
                         <div className="form-group">
                             <label htmlFor="price">{propertyType === 'Rent' ? 'Monthly Price (€)' : 'Total Price (€)'}</label>
@@ -269,7 +261,7 @@ const handleSubmit = (e) => {
                     <div className="form-group full-width">
                         <div className="services-header">
                             <label className="group-legend">Services</label>
-                            {/* --- INDICATORE DI CARICAMENTO PER I SERVIZI --- */}
+                            {}
                             {isCheckingAmenities && <span className="amenities-loader">[Verifica servizi nelle vicinanze...]</span>}
                         </div>
                         <div className="checkbox-group">
@@ -287,7 +279,7 @@ const handleSubmit = (e) => {
                         </div>
                     </div>
                     
-                    {/* ... (resto del form, immagini, etc.) ... */}
+                    {}
                     <div className="form-group full-width">
                         <label>Images (Max 7)</label>
                         <input type="file" multiple accept="image/*" ref={fileInputRef} onChange={handleImageChange} style={{ display: 'none' }} />
@@ -316,8 +308,8 @@ const handleSubmit = (e) => {
 
                 <ConfirmationModal
                     isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)} // Chiude semplicemente il modale
-                    onConfirm={handleConfirmSubmit}       // Esegue l'invio
+                    onClose={() => setIsModalOpen(false)}
+                    onConfirm={handleConfirmSubmit}
                     title="Confirm Submission"
                 >
                     <p>Are you sure you want to add this property to the listings?</p>

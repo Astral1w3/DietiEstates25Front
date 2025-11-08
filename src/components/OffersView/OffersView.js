@@ -3,12 +3,10 @@ import { Link } from 'react-router-dom';
 import 'jspdf-autotable';
 import { FaTags, FaRegClock, FaRegCheckCircle, FaRegTimesCircle } from 'react-icons/fa';
 
-// Componenti
 import StatCard from '../StatCard/StatCard';
 import SuccessView from '../SuccessView/SuccessView';
-import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // Importa il nuovo modale
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
 
-// Servizi e CSS
 import { getMyOffers, acceptOffer, declineOffer } from '../../services/offerService';
 import './OffersView.css';
 
@@ -57,7 +55,6 @@ const OffersView = () => {
 
         const { offerId, action } = actionToConfirm;
         
-        // Chiudi subito il modale per dare un feedback visivo
         setIsModalOpen(false);
         
         try {

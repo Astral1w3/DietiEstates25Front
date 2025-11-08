@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 
-// Importa tutti i nuovi componenti
 import ProfileMenu from '../../components/ProfileMenu/ProfileMenu';
 import ViewProfileDetails from '../../components/ViewProfileDetails/ViewProfileDetails';
 import AddPropertyForm from '../../components/AddPropertyForm/AddPropertyForm';
@@ -12,14 +11,12 @@ import Logout from '../../components/Logout/Logout'
 import BookingsView from '../../components/BookingsView/BookingsView';
 import OffersView from '../../components/OffersView/OffersView'
 
-import './Profile.css'; // Useremo questo CSS per il layout
+import './Profile.css';
 
 const ProfilePage = () => {
     const { user } = useAuth();
-    // Stato per sapere quale componente mostrare a destra
     const [activeView, setActiveView] = useState('viewDetails');
 
-    // Funzione helper per renderizzare il componente corretto
     const renderActiveView = () => {
         switch (activeView) {
             case 'viewDetails':

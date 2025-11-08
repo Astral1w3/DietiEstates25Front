@@ -2,12 +2,10 @@ import React from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useNavigate } from 'react-router-dom'; // Importa useNavigate
+import { useNavigate } from 'react-router-dom';
 
-// Configura la tua API Key di Geoapify qui
 const GEOAPIFY_API_KEY = "10c85af945f84d199501c9b466918a85";
 
-// Icona di default
 const defaultIcon = L.icon({
     iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
     iconSize: [25, 41],
@@ -17,7 +15,6 @@ const defaultIcon = L.icon({
     shadowSize: [41, 41]
 });
 
-// Icona per l'hover
 const hoveredIcon = new L.Icon({
     iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
     iconSize: [25, 41],
@@ -28,7 +25,7 @@ const hoveredIcon = new L.Icon({
 });
 
 const MapDisplay = ({ properties, hoveredPropertyId, backUrl, onMarkerEnter, onMarkerLeave }) => {
-    const navigate = useNavigate(); // Inizializza l'hook per la navigazione
+    const navigate = useNavigate();
 
     const validProperties = properties.filter(p => 
         p.address && 
@@ -66,19 +63,15 @@ const MapDisplay = ({ properties, hoveredPropertyId, backUrl, onMarkerEnter, onM
                         key={property.idProperty} 
                         position={[property.address.latitude, property.address.longitude]}
                         icon={property.idProperty === hoveredPropertyId ? hoveredIcon : defaultIcon}
-                        // --- MODIFICA PRINCIPALE: GESTIONE DEGLI EVENTI ---
                         eventHandlers={{
                             click: () => {
-                                // 1. Usa la prop 'backUrl' per passare lo stato nella navigazione
                                 navigate(`/property/${property.idProperty}`, { state: { from: backUrl } });
                             },
                             mouseover: (event) => {
-                                // 2. Chiama la funzione del genitore per aggiornare lo stato e cambiare l'icona
                                 if (onMarkerEnter) onMarkerEnter(property.idProperty);
                                 event.target.openPopup();
                             },
                             mouseout: (event) => {
-                                // 3. Chiama la funzione del genitore per resettare lo stato
                                 if (onMarkerLeave) onMarkerLeave();
                                 event.target.closePopup();
                             }

@@ -1,16 +1,16 @@
 import './LoginRegisterModal.css'; 
 import React, { useState } from 'react';
-import { useAuth } from '../../context/AuthContext'; // <-- Importa il contesto
+import { useAuth } from '../../context/AuthContext';
 
 const RegisterModal = ({ isOpen, onSwitch }) => {
-  const { register } = useAuth(); // <-- Ottieni la funzione dal contesto
+  const { register } = useAuth();
 
   const [email, setEmail] = useState('');
-  const [name, setName] = useState(''); // Questo sarà il nostro 'username'
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState(''); // Stato per il messaggio di successo
+  const [success, setSuccess] = useState('');
 
   if (!isOpen) {
     return null;
@@ -40,8 +40,6 @@ const RegisterModal = ({ isOpen, onSwitch }) => {
         }, 2000);
 
       } catch (err) {
-        // --- FIX: Estrai la proprietà .message dall'oggetto di errore ---
-        // Controlla se err.response.data.message esiste, altrimenti usa un testo generico.
         const errorMessage = err.response?.data?.message || "Si è verificato un errore. Riprova.";
         setError(errorMessage);
       }

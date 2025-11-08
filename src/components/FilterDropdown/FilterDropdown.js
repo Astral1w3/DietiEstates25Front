@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import './FilterDropdown.css';
 
-// Dati di esempio
 const roomOptions = [1, 2, 3, 4, 5, 6, 7, 8, 9]; 
 const energyClassOptions = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
@@ -45,10 +44,10 @@ const FilterDropdown = ({
 
             <div className="filter-content">
 
-                {/* --- SEZIONE TIPO DI TRANSAZIONE --- */}
+                
             <div className="filter-section">
                 <div className="radio-group-container">
-                    {/* Opzione Rent */}
+                    
                     <div className="radio-item">
                         <input
                             type="radio"
@@ -61,7 +60,7 @@ const FilterDropdown = ({
                         <label htmlFor="type-rent">Rent</label>
                     </div>
 
-                    {/* Opzione Buy */}
+                    
                     <div className="radio-item">
                         <input
                             type="radio"
@@ -74,13 +73,13 @@ const FilterDropdown = ({
                         <label htmlFor="type-sale">Sale</label>
                     </div>
 
-                    {/* Opzione Any */}
+                    
                     <div className="radio-item">
                         <input
                             type="radio"
                             id="type-any"
                             name="transactionType"
-                            value="any" // o una stringa vuota '' se preferisci
+                            value="any"
                             checked={filters.transactionType === 'any' || !filters.transactionType}
                             onChange={onFilterChange}
                         />
@@ -89,7 +88,7 @@ const FilterDropdown = ({
                 </div>
             </div>
 
-                {/* --- SEZIONE PREZZO --- */}
+                
                 <div className="filter-section">
                     <label>Price (€)</label>
                     <div className="range-inputs">
@@ -98,7 +97,7 @@ const FilterDropdown = ({
                     </div>
                 </div>
                 
-                {/* ---- NUOVA SEZIONE INSERITA QUI ---- */}
+                
                 <div className="filter-section">
                     <div className="select-inputs">
                         <div className="input-group">
@@ -124,7 +123,7 @@ const FilterDropdown = ({
                     </div>
                 </div>
 
-                {/* --- SEZIONE SERVIZI --- */}
+                
                 <div className="filter-section">
                     <label>Services</label>
                     <div className="services-grid">

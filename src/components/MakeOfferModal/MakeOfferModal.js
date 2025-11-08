@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { createOffer } from '../../services/offerService'; // Il servizio ora è corretto
+import { createOffer } from '../../services/offerService';
 import SuccessView from '../SuccessView/SuccessView';
 import './MakeOfferModal.css';
 
@@ -23,7 +23,6 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
     const handleSubmit = async () => {
         const priceValue = parseFloat(offerPrice);
 
-        // La validazione frontend rimane come prima linea di difesa
         if (!priceValue || priceValue <= 0) {
             setError('Please enter a valid amount.');
             return;
@@ -42,7 +41,7 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
                 offerPrice: priceValue
             };
             
-            await createOffer(offerData); // Chiama il servizio corretto
+            await createOffer(offerData);
             
             setIsSuccess(true);
 
@@ -51,17 +50,12 @@ const MakeOfferModal = ({ isOpen, onClose, propertyId, currentPrice }) => {
             }, 3000);
 
         } catch (err) {
-            // --- GESTIONE DEGLI ERRORI MIGLIORATA ---
-            // Controlliamo se l'errore proviene dalla risposta del server (es. errore di validazione 400)
             if (err.response && err.response.data && err.response.data.message) {
-                // Mostra all'utente il messaggio di errore specifico inviato dal backend
                 setError(err.response.data.message);
             } else {
-                // Altrimenti, è un errore di rete o un altro problema imprevisto
                 setError("A connection error occurred. Please try again later.");
             }
         } finally {
-            // Questa parte viene eseguita sia in caso di successo che di errore
             setIsSubmitting(false);
         }
     };

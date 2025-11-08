@@ -1,5 +1,4 @@
-// File: Home.js
-import SearchBar from '../../components/SearchBar/SearchBar'; // 1. IMPORTA IL COMPONENTE
+import SearchBar from '../../components/SearchBar/SearchBar';
 import './Home.css'; 
 
 const Home = () => {
@@ -10,7 +9,6 @@ const Home = () => {
             <main className="hero-content">
                 <h1>Discover a place<br />you'll love to live</h1>
                 
-                {/* 2. USA IL COMPONENTE SEARCHBAR QUI */}
                 <div className="search-container">
                     <SearchBar />
                 </div>

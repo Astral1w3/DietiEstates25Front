@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link, useLocation, useNavigate } from 'react-router-dom';
 
-// Componenti UI
 import SearchBar from '../../components/SearchBar/SearchBar';
 import PropertyCard from '../../components/PropertyCard/PropertyCard';
 import MapDisplay from '../../components/MapDisplay/MapDisplay';
 import FilterDropdown from '../../components/FilterDropdown/FilterDropdown';
 
-// CSS
 import './PropertiesPage.css';
 
 import { searchPropertiesByLocation } from '../../services/propertyService';
@@ -69,7 +67,7 @@ const PropertiesPage = () => {
                 setPageInfo({
                     totalPages: pageResponse.totalPages,
                     totalElements: pageResponse.totalElements,
-                    currentPage: pageResponse.currentPage, // <-- USA .currentPage
+                    currentPage: pageResponse.currentPage,
                 });
 
                 let initialData = fetchedProperties;
@@ -225,10 +223,8 @@ return (
                                 </button>
 
                                 <span>
-                                    {/* 
-                                    Ora che siamo dentro il controllo, 'pageInfo.currentPage' 
-                                    è garantito essere un numero.
-                                    */}
+                                    {
+}
                                     Page {pageInfo.currentPage + 1} of {pageInfo.totalPages}
                                 </span>
 
@@ -240,7 +236,6 @@ return (
                                 </button>
                             </>
                         )}
-                        {/* --- FINE BLOCCO CORRETTO --- */}
                     </div>
                 </div>
 
@@ -248,9 +243,9 @@ return (
                     <MapDisplay 
                         properties={displayedProperties} 
                         hoveredPropertyId={hoveredPropertyId}
-                        backUrl={backUrlFromSearch} // 1. Passa l'URL per il ritorno
-                        onMarkerEnter={setHoveredPropertyId} // 2. Passa la funzione per impostare l'hover
-                        onMarkerLeave={() => setHoveredPropertyId(null)} // 3. Passa la funzione per rimuovere l'hover
+                        backUrl={backUrlFromSearch}
+                        onMarkerEnter={setHoveredPropertyId}
+                        onMarkerLeave={() => setHoveredPropertyId(null)}
                     />
                 </div>
             </div>

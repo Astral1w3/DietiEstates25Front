@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
-import './CreateUserForm.css'; // Creeremo questo file CSS
+import './CreateUserForm.css';
 import { createUser } from '../../services/userService'
 import { useAuth } from '../../context/AuthContext'
 
 const CreateUserForm = ({ roleToCreate }) => {
     const { user } = useAuth();
-    // Stato per i dati del nuovo utente
     const [formData, setFormData] = useState({
         username: '',
         email: '',
         password: '',
     });
 
-    // Stati per il feedback e il caricamento
     const [message, setMessage] = useState({ text: '', type: '' });
     const [isLoading, setIsLoading] = useState(false);
 
-    // Gestore per l'aggiornamento degli input
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -25,18 +22,15 @@ const CreateUserForm = ({ roleToCreate }) => {
         }));
     };
 
-    // Funzione per validare un'email
     const validateEmail = (email) => {
         const re = /\S+@\S+\.\S+/;
         return re.test(email);
     };
 
-    // Gestore per la sottomissione del form
     const handleSubmit = async (e) => {
         e.preventDefault();
         setMessage({ text: '', type: '' });
 
-        // 1. Validazione dei dati
         if (!formData.username || !formData.email || !formData.password) {
             setMessage({ text: 'All fields are required.', type: 'error' });
             return;
@@ -54,16 +48,14 @@ const CreateUserForm = ({ roleToCreate }) => {
 
 
         try {
-            // Prepara l'oggetto con tutti i dati necessari
             const newUser = {
                 username: formData.username,
                 email: formData.email,
-                userPassword: formData.password,     // <-- CORRETTO
-                roleName: roleToCreate,// <-- CORRETTO
-                emailCreator:  user.email            // <-- CORRETTO
+                userPassword: formData.password,
+                roleName: roleToCreate,
+                emailCreator:  user.email
             };
 
-            // Chiama la funzione del servizio passando l'oggetto
             const createdUser = await createUser(newUser);
 
             setMessage({
@@ -74,7 +66,6 @@ const CreateUserForm = ({ roleToCreate }) => {
             setFormData({ username: '', email: '', password: '' });
 
         } catch (error) {
-            // Gestisci l'errore che arriva dal servizio
             setMessage({ text: 'Si è verificato un errore. Riprova.', type: 'error' });
         } finally {
             setIsLoading(false);
@@ -121,7 +112,7 @@ const CreateUserForm = ({ roleToCreate }) => {
                     />
                 </div>
 
-                {/* Mostra i messaggi di feedback */}
+                
                 {message.text && (
                     <div className={`form-message ${message.type}`}>
                         {message.text}

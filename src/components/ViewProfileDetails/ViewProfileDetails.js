@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import './ViewProfileDetails.css'; // Creeremo questo CSS
+import './ViewProfileDetails.css';
 
 const ViewProfileDetails = () => {
     const { user } = useAuth();

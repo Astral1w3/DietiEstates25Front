@@ -1,27 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
-// Importa le nuove funzioni dal service
 import { bookVisit, getBookedDates } from '../../services/visitService';
 import SuccessView from '../SuccessView/SuccessView';
 
 
-// CSS
 import 'react-datepicker/dist/react-datepicker.css';
 import './BookingVisitModal.css';
 
 const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
-    // Stato per la data, errori e sottomissione
     const [selectedDate, setSelectedDate] = useState(null);
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
-    // NUOVO STATO: per le date da disabilitare e il loro caricamento
     const [bookedDates, setBookedDates] = useState([]);
     const [isLoadingDates, setIsLoadingDates] = useState(true);
 
-    // EFFETTO: Carica le date prenotate quando il modale si apre
     useEffect(() => {
-        // Esegui solo se il modale è aperto e abbiamo un propertyId
         if (isOpen && propertyId) {
             const fetchBookedDates = async () => {
                 setIsLoadingDates(true);
@@ -29,7 +23,6 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
                     const dates = await getBookedDates(propertyId);
                     setBookedDates(dates);
                 } catch (err) {
-                    // Se fallisce, mostriamo un errore nel modale
                     setError("Unable to load available dates.");
                 } finally {
                     setIsLoadingDates(false);
@@ -38,7 +31,7 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
 
             fetchBookedDates();
         }
-    }, [isOpen, propertyId]); // Dipendenze: riesegui se il modale si apre o cambia immobile
+    }, [isOpen, propertyId]);
 
     if (!isOpen) {
         return null;
@@ -63,7 +56,6 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
         try {
             await bookVisit({
                 propertyId: propertyId,
-                // Assicurati di inviare la data in un formato standard (es. ISO)
                 visitDate: selectedDate.toISOString(),
             });
             setIsSuccess(true);
@@ -82,7 +74,6 @@ const BookingVisitModal = ({ isOpen, onClose, propertyId }) => {
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
 
                 {isSuccess ? (
-                    // MOLTO PIÙ PULITO: Usiamo il nuovo componente passandogli titolo e messaggio
                     <SuccessView title="Request Sent!">
                         <p>
                             Your visit request for the day <br/>

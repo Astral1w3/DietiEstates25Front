@@ -1,5 +1,5 @@
 import React from 'react';
-import './SuccessView.css'; // Il suo CSS dedicato
+import './SuccessView.css';
 
 const SuccessIcon = () => (
     <svg className="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
@@ -16,7 +16,6 @@ const SuccessIcon = () => (
  */
 const SuccessView = ({ title = "Operation Complete!", children }) => {
     return (
-        // NUOVO: Aggiunto un div overlay come contenitore principale
         <div className="success-view-overlay"> 
             <div className="success-view-container">
                 <SuccessIcon />

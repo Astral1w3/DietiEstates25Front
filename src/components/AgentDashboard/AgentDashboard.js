@@ -5,11 +5,9 @@ import autoTable from 'jspdf-autotable';
 import { CSVLink } from 'react-csv';
 import jsPDF from 'jspdf';
 
-// 1. Importa i tuoi componenti personalizzati
-import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'; // Assicurati che il percorso sia corretto
-import SuccessView from '../SuccessView/SuccessView';             // Assicurati che il percorso sia corretto
+import ConfirmationModal from '../ConfirmationModal/ConfirmationModal';
+import SuccessView from '../SuccessView/SuccessView';
 
-// 2. Importa le funzioni del service
 import { updatePropertyState, deleteProperty } from '../../services/propertyService';
 import { FaEye, FaCalendarCheck, FaFileSignature, FaBuilding, FaCheckCircle, FaTrash, FaUndo } from 'react-icons/fa';
 
@@ -19,18 +17,14 @@ import './AgentDashboard.css';
 const placeholderImage = 'https://via.placeholder.com/400x250.png?text=No+Image';
 
 const AgentDashboard = () => {
-    // Stato per i dati della dashboard
     const [dashboardData, setDashboardData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // 3. Stato per gestire i modali e le notifiche
     const [modalState, setModalState] = useState({ isOpen: false, title: '', children: null, onConfirm: () => {} });
     const [successState, setSuccessState] = useState({ isVisible: false, title: '', children: null });
 
-    // --- FUNZIONI HELPER ---
 
-    // Funzione per mostrare il messaggio di successo e nasconderlo dopo 3 secondi
     const showSuccessMessage = (title, children) => {
         setSuccessState({ isVisible: true, title, children });
         setTimeout(() => {
@@ -38,12 +32,10 @@ const AgentDashboard = () => {
         }, 1000);
     };
     
-    // Funzione per chiudere il modale di conferma
     const closeModal = () => {
         setModalState({ isOpen: false, title: '', children: null, onConfirm: () => {} });
     };
 
-    // --- LOGICA DI FETCHING DEI DATI ---
     const fetchDashboardData = useCallback(async () => {
         try {
             setLoading(true);
@@ -62,9 +54,7 @@ const AgentDashboard = () => {
     }, [fetchDashboardData]);
 
 
-    // --- GESTIONE AZIONI UTENTE ---
 
-    // 4. Apre il modale per confermare il cambio di stato
     const openToggleConfirmation = (e, propertyId, currentState) => {
         e.preventDefault();
         e.stopPropagation();
@@ -78,11 +68,10 @@ const AgentDashboard = () => {
             isOpen: true,
             title,
             children: <p>{message}</p>,
-            onConfirm: () => executeToggleState(propertyId, newState), // La logica vera e propria è qui
+            onConfirm: () => executeToggleState(propertyId, newState),
         });
     };
 
-    // Logica effettiva che viene eseguita alla conferma
     const executeToggleState = async (propertyId, newState) => {
         try {
             await updatePropertyState(propertyId, newState);
@@ -97,13 +86,11 @@ const AgentDashboard = () => {
             showSuccessMessage("Update Successful!", `Property status has been set to ${newState}.`);
         } catch (err) {
             console.error(`Failed to update property state:`, err);
-            // Qui potresti mostrare un modale di errore
         } finally {
             closeModal();
         }
     };
 
-    // 5. Apre il modale per confermare la cancellazione
     const openDeleteConfirmation = (e, propertyId) => {
         e.preventDefault();
         e.stopPropagation();
@@ -112,11 +99,10 @@ const AgentDashboard = () => {
             isOpen: true,
             title: "Confirm Deletion",
             children: <p>Are you sure you want to delete this property? This action cannot be undone.</p>,
-            onConfirm: () => executeDelete(propertyId), // La logica vera e propria è qui
+            onConfirm: () => executeDelete(propertyId),
         });
     };
 
-    // Logica effettiva che viene eseguita alla conferma
     const executeDelete = async (propertyId) => {
         try {
             await deleteProperty(propertyId);
@@ -129,13 +115,11 @@ const AgentDashboard = () => {
             showSuccessMessage("Deletion Successful!", "The property has been permanently removed.");
         } catch (err) {
             console.error("Failed to delete property:", err);
-            // Qui potresti mostrare un modale di errore
         } finally {
             closeModal();
         }
     };
 
-    // --- GESTIONE EXPORT (invariata) ---
     const handleExportPDF = useCallback(() => {
         if (!dashboardData || !dashboardData.properties) return;
         const doc = new jsPDF();
@@ -158,14 +142,12 @@ const AgentDashboard = () => {
         { label: "Sale Type", key: "saleType" },
     ];
 
-    // --- RENDER ---
     if (loading) return <div className="dashboard-view"><h2>Loading Dashboard...</h2></div>;
     if (error) return <div className="dashboard-view"><h2 className="error-message">{error}</h2></div>;
     if (!dashboardData) return <div className="dashboard-view"><h2>No data available.</h2></div>;
 
     return (
         <div className="dashboard-view agent-dashboard">
-            {/* 6. Renderizza i componenti customizzati qui */}
             <ConfirmationModal 
                 isOpen={modalState.isOpen}
                 onClose={closeModal}

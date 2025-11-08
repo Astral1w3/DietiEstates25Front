@@ -1,4 +1,4 @@
-import api from './api'; // Importa la tua istanza di axios configurata
+import api from './api';
 
 /**
  * Recupera le date già prenotate per un dato immobile.
@@ -8,11 +8,10 @@ import api from './api'; // Importa la tua istanza di axios configurata
 export const getBookedDates = async (propertyId) => {
     try {
         const response = await api.get(`/visits/property/${propertyId}/booked-dates`);
-        // L'API restituisce stringhe di data, le convertiamo in oggetti Date
         return response.data.map(dateString => new Date(dateString));
     } catch (error) {
         console.error("Errore nel recupero delle date prenotate:", error);
-        throw error; // Rilancia l'errore per gestirlo nel componente
+        throw error;
     }
 };
 
@@ -39,18 +38,11 @@ export const bookVisit = async (visitData) => {
  */
 export const getMyBookings = async () => {
     try {
-        // --- MODIFICA CHIAVE ---
-        // Sostituiamo l'URL placeholder con quello reale e corretto
-        // che abbiamo definito nel VisitController.
         const response = await api.get('/visits/agent-bookings'); 
         
         return response.data;
     } catch (error){
-        // La gestione dell'errore è già corretta.
-        // Se un utente non autorizzato (es. un 'USER') prova a chiamare questo endpoint,
-        // l'interceptor di Axios riceverà un errore 403 Forbidden dal backend,
-        // e questo 'catch' lo intercetterà e lo rilancerà al componente.
         console.error("Errore nel recupero delle prenotazioni dell'agente:", error.response || error);
-        throw error; // Rilancia l'errore per gestirlo nel componente
+        throw error;
     }
 };

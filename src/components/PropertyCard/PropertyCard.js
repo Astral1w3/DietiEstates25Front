@@ -2,9 +2,7 @@
 import React from 'react';
 import './PropertyCard.css';
 
-import { FaEye } from 'react-icons/fa'; // Aggiungi questo import
-// --- NUOVO: Mappatura per i servizi di prossimità ---
-// Questo oggetto ci aiuta a tradurre i dati del backend in etichette e emoji per l'interfaccia.
+import { FaEye } from 'react-icons/fa';
 const amenityMap = {
     'close to parks': { label: 'Parks Nearby', emoji: '🌳' },
     'close to schools': { label: 'Schools Nearby', emoji: '🏫' },
@@ -32,13 +30,9 @@ const PropertyCard = ({ property, onMouseEnter, onMouseLeave }) => {
         ? new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(property.price)
         : 'Price not available';
 
-    // --- NUOVO BLOCCO LOGICO: Identifica i servizi di prossimità ---
-    // Controlliamo se la proprietà ha dei servizi, altrimenti usiamo un array vuoto.
     const nearbyAmenities = property.services
         ? property.services
-            // Mappiamo ogni servizio dell'immobile con la nostra 'amenityMap'.
             .map(service => amenityMap[service.serviceName])
-            // Filtriamo via i risultati 'undefined' (es. per servizi come 'elevator' o 'balcony' che non sono nella mappa).
             .filter(Boolean) 
         : [];
 
