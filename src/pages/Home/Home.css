@@ -10,6 +10,8 @@ body, html {
 
 
 /* --- Contenitore Principale (Hero Section) --- */
+
+
 .hero-container {
     height: 100vh;
     width: 100%;
@@ -19,8 +21,9 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* Stili dello sfondo (invariati) */
+    
+    /* Stili dello sfondo */
+    background-color: #ffffff; 
     background-image: url('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&q=80');
     background-size: cover;
     background-position: center;
