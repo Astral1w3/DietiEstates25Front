@@ -24,7 +24,7 @@ body, html {
     
     /* Stili dello sfondo */
     background-color: #ffffff; 
-    background-image: url('/home/astral1w3/Desktop/Uni/SoftwareEngProject/dietiestates2025-front/public/bgHome.jpeg');
+    background-image: url('../../../public/bgHome.jpeg');
     background-size: cover;
     background-position: center;
     
