@@ -35,13 +35,15 @@ const SearchBar = () => {
         );
     };
 
+    const GEOAPIFY_API_KEY = "10c85af945f84d199501c9b466918a85";
 
     return (
         <div className="page-search-form">
             
+            {}
+            <GeoapifyContext apiKey={GEOAPIFY_API_KEY} className="geopify-context">
             
-            <GeoapifyContext apiKey={process.env.REACT_APP_GEOAPIFY_API_KEY} className="geopify-context">
-        
+                {}
                 <GeoapifyGeocoderAutocomplete
                     placeholder="Search by city or region "
                     
